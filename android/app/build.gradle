@@ -22,6 +22,7 @@ if (flutterVersionName == null) {
 }
 
 apply plugin: 'com.android.application'
+apply plugin: 'com.google.gms.google-services'
 apply plugin: 'com.onesignal.androidsdk.onesignal-gradle-plugin'
 apply from: "$flutterRoot/packages/flutter_tools/gradle/flutter.gradle"
 
@@ -33,6 +34,7 @@ android {
         applicationId "com.taosif7.link_ring"
         minSdkVersion 16
         targetSdkVersion 30
+        multiDexEnabled true
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
     }
@@ -47,7 +49,9 @@ android {
 }
 
 dependencies{
+    implementation 'com.android.support:multidex:1.0.3'
     implementation 'androidx.appcompat:appcompat:1.2.0'
+    implementation 'com.android.support:multidex:1.0.3'
     implementation 'com.onesignal:OneSignal:[4.0.0, 4.99.99]'
 }
 

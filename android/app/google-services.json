@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "448486613097",
+    "project_id": "link-ring-taosif7",
+    "storage_bucket": "link-ring-taosif7.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:448486613097:android:043a65fa046592686ac2f8",
+        "android_client_info": {
+          "package_name": "com.taosif7.link_ring"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "448486613097-ekdsnhd1rc0j509d8b9uj851gqdk9eqk.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAafFm0V2ttbEyN1k4TLpgj8k_Poy83aaw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "448486613097-ekdsnhd1rc0j509d8b9uj851gqdk9eqk.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
