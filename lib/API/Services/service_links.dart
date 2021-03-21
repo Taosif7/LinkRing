@@ -1,0 +1,26 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:link_ring/API/Models/model_link.dart';
+
+class service_links {
+  static service_links service_instance;
+  FirebaseFirestore firestore;
+
+  service_links._() {
+    firestore = FirebaseFirestore.instance;
+  }
+
+  get instance => service_instance ??= service_links._();
+
+  Future<model_link> getLinkById(String id) async {
+    DocumentSnapshot doc = await firestore.collection(model_link.KEY_COLLECTION_LINKS).doc(id).get();
+    return model_link.fromMap(doc.data());
+  }
+
+  Future<List<model_link>> getLinkByLink(String link) async {
+    QuerySnapshot query =
+        await firestore.collection(model_link.KEY_COLLECTION_LINKS).where(model_link.KEY_LINK, isEqualTo: link).get();
+    List<model_link> links = [];
+    query.docs.forEach((doc) => links.add(model_link.fromMap(doc.data())));
+    return links;
+  }
+}
