@@ -18,7 +18,8 @@ class model_user {
   DateTime join_date;
   List<String> joinedGroupsIds = [];
 
-  model_user({this.id, this.name, this.email, this.msg_token, this.joinedGroupsIds});
+  model_user(
+      {this.id, this.name, this.email, this.msg_token, this.joinedGroupsIds = const [], this.join_date, this.profile_pic_url});
 
   model_user.fromMap(Map<String, dynamic> map) {
     this.id = map[KEY_ID];
