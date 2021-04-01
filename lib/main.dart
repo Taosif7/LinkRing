@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:link_ring/Cubits/AppState/cubit_app.dart';
 import 'package:link_ring/Cubits/AppState/state_app.dart';
 import 'package:link_ring/Screens/Homepage.dart';
+import 'package:link_ring/Screens/SignInScreen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -21,9 +22,14 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
-      home: Screen_HomePage(),
+          primarySwatch: Colors.green,
+          scaffoldBackgroundColor: Colors.blueGrey.shade50,
+          appBarTheme: AppBarTheme(
+              color: Colors.white,
+              elevation: 0,
+              textTheme: TextTheme(headline6: TextStyle(color: Colors.black, fontSize: 26, fontWeight: FontWeight.bold)),
+              centerTitle: true)),
+      home: context.read<cubit_app>().state.isLoggedIn ? Screen_HomePage() : Screen_SignIn(),
     );
   }
 }
