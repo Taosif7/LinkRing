@@ -9,10 +9,11 @@ class service_users {
     firestore = FirebaseFirestore.instance;
   }
 
-  static get instance => _service_instance ??= service_users._();
+  static service_users get instance => _service_instance ??= service_users._();
 
   Future<model_user> getUserById(String id) async {
     DocumentSnapshot doc = await firestore.collection(model_user.KEY_COLLECTION_USERS).doc(id).get();
+    if (!doc.exists) return null;
     return model_user.fromMap(doc.data());
   }
 
@@ -22,6 +23,16 @@ class service_users {
         .where(model_user.KEY_EMAIL, isEqualTo: email.toLowerCase())
         .limit(1)
         .get();
+    if (query.docs.length == 0 || !query.docs.first.exists) return null;
     return model_user.fromMap(query.docs.first.data());
+  }
+
+  Future<model_user> createNewUser(String name, String email, String profilePicUrl) async {
+    model_user newUser = new model_user(name: name, email: email, profile_pic_url: profilePicUrl, join_date: DateTime.now());
+    DocumentReference userDoc = firestore.collection(model_user.KEY_COLLECTION_USERS).doc();
+
+    newUser.id = userDoc.id;
+    await userDoc.set(newUser.toMap());
+    return newUser;
   }
 }

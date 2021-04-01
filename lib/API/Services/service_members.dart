@@ -10,7 +10,7 @@ class service_members {
     firestore = FirebaseFirestore.instance;
   }
 
-  static get instance => _service_instance ??= service_members._();
+  static service_members get instance => _service_instance ??= service_members._();
 
   Future<List<model_member>> getMembers(String groupId, {int quantity = 20, String afterThisId}) async {
     DocumentSnapshot prevDoc;
@@ -34,5 +34,22 @@ class service_members {
     query.docs.forEach((doc) => members.add(new model_member.fromJson(doc.data())));
 
     return members;
+  }
+
+  /// Method to update member properties
+  Future<void> updateMemberInfo(String groupId, model_member member) async {
+    // Find member doc
+    DocumentSnapshot memberDoc = await firestore
+        .collection(model_group.KEY_COLLECTION_GROUPS)
+        .doc(groupId)
+        .collection(model_member.KEY_COLLECTION_MEMBERS)
+        .doc(member.id)
+        .get();
+
+    // Update if it exists
+    if (!memberDoc.exists) return;
+    Map<String, dynamic> updateData = member.toJson();
+    updateData.remove(model_member.KEY_JOINED_TIME); // Don't update joined time
+    await memberDoc.reference.update(updateData);
   }
 }
