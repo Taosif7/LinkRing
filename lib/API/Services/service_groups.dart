@@ -9,7 +9,7 @@ class service_groups {
     firestore = FirebaseFirestore.instance;
   }
 
-  static get instance => _service_instance ??= service_groups._();
+  static service_groups get instance => _service_instance ??= service_groups._();
 
   Future<model_group> getGroupById(String id) async {
     DocumentSnapshot doc = await firestore.collection(model_group.KEY_COLLECTION_GROUPS).doc(id).get();
@@ -21,11 +21,9 @@ class service_groups {
 
     // for every 10 elements, perform where in query to find groups
     for (int i = 0; i < groupIds.length; i += 10) {
-      QuerySnapshot qs = await firestore
-          .collection(model_group.KEY_COLLECTION_GROUPS)
-          .where(model_group.KEY_ID,
-              whereIn: groupIds.sublist(i, (i + 10 >= groupIds.length) ? groupIds.length - 1 : i + 10).toList())
-          .get();
+      List<String> subList = groupIds.sublist(i, (i + 10 >= groupIds.length) ? groupIds.length : i + 10).toList();
+      QuerySnapshot qs =
+          await firestore.collection(model_group.KEY_COLLECTION_GROUPS).where(model_group.KEY_ID, whereIn: subList).get();
       qs.docs.forEach((doc) => groups.add(model_group.fromMap(doc.data())));
     }
 
