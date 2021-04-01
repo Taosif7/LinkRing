@@ -1,6 +1,5 @@
 package com.taosif7.link_ring;
 
-import android.os.Build;
 import android.os.Bundle;
 
 import androidx.annotation.Nullable;
@@ -21,11 +20,6 @@ public class MainActivity extends FlutterActivity {
         // OneSignal Initialization
         OneSignal.initWithContext(this);
         OneSignal.setAppId("5a6b28d9-dacb-4d81-96cb-496151ab13fd");
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1) {
-            setShowWhenLocked(true);
-            setTurnScreenOn(true);
-        }
 
     }
 }

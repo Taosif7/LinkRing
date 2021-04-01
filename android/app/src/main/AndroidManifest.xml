@@ -6,14 +6,12 @@
     <uses-permission android:name="android.permission.DISABLE_KEYGUARD" />
 
    <application
-        android:label="link_ring"
-        android:icon="@mipmap/ic_launcher">
+        android:label="Link Ring"
+       android:icon="@mipmap/ic_launcher">
         <activity
             android:name=".MainActivity"
             android:launchMode="singleTop"
             android:theme="@style/LaunchTheme"
-            android:showWhenLocked="true"
-            android:turnScreenOn="true"
             android:configChanges="orientation|keyboardHidden|keyboard|screenSize|smallestScreenSize|locale|layoutDirection|fontScale|screenLayout|density|uiMode"
             android:hardwareAccelerated="true"
             android:windowSoftInputMode="adjustResize">
