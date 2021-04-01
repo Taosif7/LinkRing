@@ -2,14 +2,14 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:link_ring/API/Models/model_group.dart';
 
 class service_groups {
-  static service_groups service_instance;
+  static service_groups _service_instance;
   FirebaseFirestore firestore;
 
   service_groups._() {
     firestore = FirebaseFirestore.instance;
   }
 
-  get instance => service_instance ??= service_groups._();
+  static get instance => _service_instance ??= service_groups._();
 
   Future<model_group> getGroupById(String id) async {
     DocumentSnapshot doc = await firestore.collection(model_group.KEY_COLLECTION_GROUPS).doc(id).get();

@@ -3,14 +3,14 @@ import 'package:link_ring/API/Models/model_group.dart';
 import 'package:link_ring/API/Models/model_member.dart';
 
 class service_members {
-  static service_members service_instance;
+  static service_members _service_instance;
   FirebaseFirestore firestore;
 
   service_members._() {
     firestore = FirebaseFirestore.instance;
   }
 
-  get instance => service_instance ??= service_members._();
+  static get instance => _service_instance ??= service_members._();
 
   Future<List<model_member>> getMembers(String groupId, {int quantity = 20, String afterThisId}) async {
     DocumentSnapshot prevDoc;

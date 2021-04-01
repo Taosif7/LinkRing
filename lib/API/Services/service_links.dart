@@ -3,14 +3,14 @@ import 'package:link_ring/API/Models/model_group.dart';
 import 'package:link_ring/API/Models/model_link.dart';
 
 class service_links {
-  static service_links service_instance;
+  static service_links _service_instance;
   FirebaseFirestore firestore;
 
   service_links._() {
     firestore = FirebaseFirestore.instance;
   }
 
-  get instance => service_instance ??= service_links._();
+  static get instance => _service_instance ??= service_links._();
 
   Future<model_link> getLinkById(String groupId, String id) async {
     DocumentSnapshot doc = await firestore
