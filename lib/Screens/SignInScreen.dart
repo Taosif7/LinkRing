@@ -6,7 +6,7 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:link_ring/Cubits/Auth/cubit_auth.dart';
 import 'package:link_ring/Cubits/Auth/state_auth.dart';
 import 'package:link_ring/Screens/Commons/IndefiniteProgressScreen.dart';
-import 'package:link_ring/Screens/Homepage.dart';
+import 'package:link_ring/Screens/HomeScreen/Homepage.dart';
 
 class Screen_SignIn extends StatelessWidget {
   GoogleSignIn _googleSignIn;

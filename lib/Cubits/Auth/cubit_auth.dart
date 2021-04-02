@@ -3,9 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:link_ring/API/Models/model_group.dart';
 import 'package:link_ring/API/Models/model_user.dart';
-import 'package:link_ring/API/Services/service_groups.dart';
 import 'package:link_ring/API/Services/service_users.dart';
 import 'package:link_ring/Cubits/AppState/cubit_app.dart';
 import 'package:link_ring/Cubits/Auth/state_auth.dart';
@@ -34,11 +32,8 @@ class cubit_auth extends Cubit<state_auth> {
       user ??=
           await service_users.instance.createNewUser(credentialUser.displayName, credentialUser.email, credentialUser.photoURL);
 
-      // Load groups
-      List<model_group> joinedGroups = await service_groups.instance.getGroupsByIds(user.joinedGroupsIds);
-
-      // Set logged in In state
-      context.read<cubit_app>().setLoggedInState(user, joinedGroups);
+      // Set logged In state
+      context.read<cubit_app>().setLoggedInState(credentialUser.email);
       return true;
     } on FirebaseAuthException catch (e) {
       switch (e.code) {
