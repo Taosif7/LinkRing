@@ -25,7 +25,7 @@ class Screen_HomePage extends StatelessWidget {
                   onPressed: () {
                     // TODO : Open options menu
                     Navigator.of(context).pushReplacement(new CupertinoPageRoute(builder: (_) => Screen_SignIn()));
-                    context.read<cubit_app>().signOut();
+                    context.read<cubit_app>().auth.signOut(context);
                   });
             },
           ),

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:link_ring/API/Models/model_user.dart';
+import 'package:link_ring/API/Services/service_messaging.dart';
 import 'package:link_ring/API/Services/service_users.dart';
 import 'package:link_ring/Cubits/AppState/cubit_app.dart';
 import 'package:link_ring/Cubits/Auth/state_auth.dart';
@@ -39,6 +40,10 @@ class cubit_auth extends Cubit<state_auth> {
       user ??=
           await service_users.instance.createNewUser(credentialUser.displayName, credentialUser.email, credentialUser.photoURL);
 
+      // Get user token and update on server
+      String messagingToken = await service_messaging.instance.getPushToken();
+      service_users.instance.updateUserToken(user.id, messagingToken);
+
       // Set logged In state
       context.read<cubit_app>().setLoggedInState(credentialUser.email);
       emit(state.copyWith(loggedIn: true, user: credentialUser));
@@ -55,5 +60,16 @@ class cubit_auth extends Cubit<state_auth> {
       await FirebaseAuth.instance.signOut();
       return false;
     }
+  }
+
+  Future<void> signOut(BuildContext context) async {
+    // Update signOut
+    model_user user = context.read<cubit_app>().state.currentUser;
+    await service_users.instance.updateUserToken(user.id, null);
+
+    // Set app signOut state
+    await FirebaseAuth.instance.signOut();
+    emit(new state_auth(loggedIn: false));
+    context.read<cubit_app>().signOut();
   }
 }

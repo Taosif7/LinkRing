@@ -35,4 +35,8 @@ class service_users {
     await userDoc.set(newUser.toMap());
     return newUser;
   }
+
+  Future<void> updateUserToken(String userId, String token) async {
+    await firestore.collection(model_user.KEY_COLLECTION_USERS).doc(userId).update({model_user.KEY_MSG_TOKEN: token});
+  }
 }
