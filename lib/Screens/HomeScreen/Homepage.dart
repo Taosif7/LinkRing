@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:link_ring/API/Models/model_group.dart';
 import 'package:link_ring/Cubits/AppState/cubit_app.dart';
 import 'package:link_ring/Cubits/AppState/state_app.dart';
+import 'package:link_ring/Screens/LinkMessagesScreen/LinkMessagesScreen.dart';
 import 'package:link_ring/Screens/SignInScreen.dart';
 
 class Screen_HomePage extends StatelessWidget {
@@ -40,12 +41,12 @@ class Screen_HomePage extends StatelessWidget {
                 itemBuilder: (ctx, idx) {
                   model_group group = context.read<cubit_app>().state.groups[idx];
                   return ListTile(
-                    title: Text(group.name, style: Theme.of(context).textTheme.headline6.copyWith(fontWeight: FontWeight.w500)),
+                    title: Text(group.name, style: Theme.of(context).textTheme.headline6.copyWith(fontWeight: FontWeight.w400)),
                     leading: CircleAvatar(backgroundImage: NetworkImage(group.icon_url), backgroundColor: Colors.blueGrey),
-                    subtitle: Text("Taosif, Kaushal, Bhumil, ...", style: Theme.of(context).textTheme.bodyText2),
-                    dense: true,
-                    trailing: Icon(Icons.arrow_forward_ios),
-                    onTap: () {},
+                    trailing: Icon(CupertinoIcons.forward, color: Theme.of(context).primaryColor),
+                    onTap: () {
+                      Navigator.push(context, new CupertinoPageRoute(builder: (x) => new LinkMessagesScreen(group)));
+                    },
                   );
                 },
                 shrinkWrap: true,
