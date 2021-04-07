@@ -3,17 +3,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_signin_button/flutter_signin_button.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:link_ring/Cubits/Auth/cubit_auth.dart';
-import 'package:link_ring/Cubits/Auth/state_auth.dart';
+import 'package:link_ring/Cubits/AppState/cubit_app.dart';
 import 'package:link_ring/Screens/Commons/IndefiniteProgressScreen.dart';
 import 'package:link_ring/Screens/HomeScreen/Homepage.dart';
 
 class Screen_SignIn extends StatelessWidget {
   GoogleSignIn _googleSignIn;
-  cubit_auth authCubit;
 
   Screen_SignIn() {
-    authCubit = new cubit_auth(state_auth());
     _googleSignIn = GoogleSignIn(
       scopes: [
         'email',
@@ -24,26 +21,19 @@ class Screen_SignIn extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (BuildContext ctx) => authCubit,
-      child: BlocBuilder<cubit_auth, state_auth>(
-        builder: (ctx, state) {
-          return Scaffold(
-            appBar: AppBar(title: Text("Sign In")),
-            body: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Center(
-                  child: SignInButton(
-                    Buttons.Google,
-                    onPressed: () => _handleSignIn(ctx),
-                  ),
-                ),
-              ],
+    return Scaffold(
+      appBar: AppBar(title: Text("Sign In")),
+      body: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Center(
+            child: SignInButton(
+              Buttons.Google,
+              onPressed: () => _handleSignIn(context),
             ),
-          );
-        },
+          ),
+        ],
       ),
     );
   }
@@ -56,7 +46,7 @@ class Screen_SignIn extends StatelessWidget {
 
       // Try signing into the system
       showIndefiniteProgressScreen(context);
-      bool signIn = await context.read<cubit_auth>().signInWithGoogle(context, await account.authentication);
+      bool signIn = await context.read<cubit_app>().auth.signInWithGoogle(context, await account.authentication);
       hideIndefiniteProgressScreen(context);
 
       // Move to homescreen on successful Sign-In

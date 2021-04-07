@@ -9,7 +9,14 @@ import 'package:link_ring/Cubits/AppState/cubit_app.dart';
 import 'package:link_ring/Cubits/Auth/state_auth.dart';
 
 class cubit_auth extends Cubit<state_auth> {
-  cubit_auth(state_auth initialState) : super(initialState);
+  factory cubit_auth() {
+    if (FirebaseAuth.instance.currentUser != null)
+      return cubit_auth.init(state_auth(loggedIn: true, user: FirebaseAuth.instance.currentUser));
+    else
+      return cubit_auth.init(state_auth(loggedIn: false));
+  }
+
+  cubit_auth.init(state_auth initialState) : super(initialState);
 
   Future<bool> signInWithGoogle(BuildContext context, GoogleSignInAuthentication authentication) async {
     AuthCredential credential =
@@ -34,6 +41,7 @@ class cubit_auth extends Cubit<state_auth> {
 
       // Set logged In state
       context.read<cubit_app>().setLoggedInState(credentialUser.email);
+      emit(state.copyWith(loggedIn: true, user: credentialUser));
       return true;
     } on FirebaseAuthException catch (e) {
       switch (e.code) {
