@@ -10,7 +10,7 @@ class service_links {
     firestore = FirebaseFirestore.instance;
   }
 
-  static get instance => _service_instance ??= service_links._();
+  static service_links get instance => _service_instance ??= service_links._();
 
   Future<model_link> getLinkById(String groupId, String id) async {
     DocumentSnapshot doc = await firestore
@@ -31,6 +31,30 @@ class service_links {
         .get();
     List<model_link> links = [];
     query.docs.forEach((doc) => links.add(model_link.fromMap(doc.data())));
+    return links;
+  }
+
+  Future<List<model_link>> getLinksForGroup(String groupId, {int quantity = 20, String lastItemId}) async {
+    List<model_link> links = [];
+    Query query = firestore
+        .collection(model_group.KEY_COLLECTION_GROUPS)
+        .doc(groupId)
+        .collection(model_link.KEY_COLLECTION_LINKS)
+        .limit(quantity)
+        .orderBy(model_link.KEY_SENT_TIME, descending: true);
+
+    if (lastItemId != null) {
+      DocumentSnapshot lastDoc = await firestore
+          .collection(model_group.KEY_COLLECTION_GROUPS)
+          .doc(groupId)
+          .collection(model_link.KEY_COLLECTION_LINKS)
+          .doc(lastItemId)
+          .get();
+      query = query.startAfterDocument(lastDoc);
+    }
+    QuerySnapshot snapshot = await query.get();
+
+    snapshot.docs.forEach((element) => links.add(new model_link.fromMap(element.data())));
     return links;
   }
 }

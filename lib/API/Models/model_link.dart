@@ -1,3 +1,5 @@
+import 'package:link_ring/API/Models/model_member.dart';
+
 class model_link {
   // Keys
   static const KEY_COLLECTION_LINKS = "links";
@@ -5,12 +7,15 @@ class model_link {
   static const KEY_NAME = "name";
   static const KEY_LINK = "link";
   static const KEY_SENT_TIME = "sent_time";
+  static const KEY_SENT_BY = "sent_by";
 
   // properties
   String id;
   String name;
   String link;
+  String sent_by;
   DateTime sent_time;
+  model_member senderMember;
 
   model_link({this.id, this.name, this.link});
 
@@ -19,6 +24,7 @@ class model_link {
     name = map[KEY_NAME];
     link = map[KEY_LINK];
     sent_time = DateTime.parse(map[KEY_SENT_TIME]).toLocal();
+    sent_by = map[KEY_SENT_BY];
   }
 
   Map<String, dynamic> toMap() {
@@ -27,6 +33,7 @@ class model_link {
     data[KEY_NAME] = this.name;
     data[KEY_LINK] = this.link;
     data[KEY_SENT_TIME] = this.sent_time.toUtc().toString();
+    data[KEY_SENT_BY] = this.sent_by;
     return data;
   }
 }
