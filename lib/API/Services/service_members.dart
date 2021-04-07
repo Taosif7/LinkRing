@@ -13,25 +13,27 @@ class service_members {
   static service_members get instance => _service_instance ??= service_members._();
 
   Future<List<model_member>> getMembers(String groupId, {int quantity = 20, String afterThisId}) async {
-    DocumentSnapshot prevDoc;
-    if (afterThisId != null)
+    Query query = firestore
+        .collection(model_group.KEY_COLLECTION_GROUPS)
+        .doc(groupId)
+        .collection(model_member.KEY_COLLECTION_MEMBERS)
+        .limit(quantity)
+        .orderBy(model_member.KEY_NAME);
+
+    if (afterThisId != null) {
+      DocumentSnapshot prevDoc;
       prevDoc = await firestore
           .collection(model_group.KEY_COLLECTION_GROUPS)
           .doc(groupId)
           .collection(model_member.KEY_COLLECTION_MEMBERS)
           .doc(afterThisId)
           .get();
-    QuerySnapshot query = await firestore
-        .collection(model_group.KEY_COLLECTION_GROUPS)
-        .doc(groupId)
-        .collection(model_member.KEY_COLLECTION_MEMBERS)
-        .limit(quantity)
-        .startAfterDocument(prevDoc)
-        .orderBy(model_member.KEY_NAME)
-        .get();
+      query = query.startAfterDocument(prevDoc);
+    }
+    QuerySnapshot snapshot = await query.get();
 
     List<model_member> members = [];
-    query.docs.forEach((doc) => members.add(new model_member.fromJson(doc.data())));
+    snapshot.docs.forEach((doc) => members.add(new model_member.fromJson(doc.data())));
 
     return members;
   }
