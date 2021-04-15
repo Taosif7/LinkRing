@@ -29,6 +29,12 @@ dependencies:
   # Others
   google_sign_in: ^5.0.1
 
+  # Network & Caching
+  cached_network_image: ^3.0.0
+
+  # Native dependencies
+  url_launcher: ^6.0.3
+
   # App State Management
   flutter_bloc: ^7.0.0
 

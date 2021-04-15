@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:link_ring/API/Models/model_group.dart';
 import 'package:link_ring/Cubits/LinkMessagesScreen/cubit_linkMessagesScreen.dart';
 import 'package:link_ring/Cubits/LinkMessagesScreen/state_linkMessagesScreen.dart';
+import 'package:link_ring/Screens/LinkMessagesScreen/widgets/LinkMessageItem.dart';
 
 class LinkMessagesScreen extends StatelessWidget {
   cubit_linkMessagesScreen cubit;
@@ -41,10 +42,11 @@ class LinkMessagesScreen extends StatelessWidget {
                 return Center(child: Text("No Links"));
               } else
                 return ListView.builder(
-                  itemBuilder: (itemBuilderCtx, index) {
-                    return Text(state.links[index].link);
-                  },
+                  physics: BouncingScrollPhysics(),
+                  itemBuilder: (itemBuilderCtx, index) => LinkMessageItem(state.links[index]),
+                  reverse: true,
                   itemCount: state.links.length,
+                  padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                 );
             })),
             Container(

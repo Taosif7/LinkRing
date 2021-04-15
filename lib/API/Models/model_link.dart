@@ -36,4 +36,6 @@ class model_link {
     data[KEY_SENT_BY] = this.sent_by;
     return data;
   }
+
+  bool get hasName => this.name != null && this.name.trim().length > 0;
 }
