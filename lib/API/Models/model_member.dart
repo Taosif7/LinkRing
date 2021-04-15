@@ -8,20 +8,23 @@ class model_member {
   static const KEY_EMAIL = "email";
   static const KEY_PROFILE_PIC = "profilePicUrl";
   static const KEY_JOINED_TIME = "joined_on";
+  static const KEY_IS_JOINED = "is_joined";
 
   String id;
   String email;
   String name;
   String profilePicUrl;
-  DateTime joined;
+  DateTime joinedOn;
+  bool isJoined;
 
-  model_member({this.id, this.email, this.name, this.joined, this.profilePicUrl});
+  model_member({this.id, this.email, this.name, this.joinedOn, this.profilePicUrl, this.isJoined});
 
-  model_member.fromUser(model_user user) {
+  model_member.fromUser(model_user user, bool isJoined) {
     this.id = user.id;
     this.email = user.email;
     this.name = user.name;
     this.profilePicUrl = user.profile_pic_url;
+    this.isJoined = isJoined;
   }
 
   model_member.fromJson(Map<String, dynamic> json) {
@@ -29,7 +32,8 @@ class model_member {
     email = json[KEY_EMAIL];
     name = json[KEY_NAME];
     profilePicUrl = json[KEY_PROFILE_PIC];
-    joined = DateTime.parse(json[KEY_JOINED_TIME]).toLocal();
+    joinedOn = DateTime.parse(json[KEY_JOINED_TIME]).toLocal();
+    isJoined = json[KEY_IS_JOINED] ?? true;
   }
 
   Map<String, dynamic> toJson() {
@@ -38,7 +42,8 @@ class model_member {
     data[KEY_EMAIL] = this.email;
     data[KEY_NAME] = this.name;
     data[KEY_PROFILE_PIC] = this.profilePicUrl;
-    data[KEY_JOINED_TIME] = this.joined?.toUtc()?.toString();
+    data[KEY_JOINED_TIME] = this.joinedOn?.toUtc()?.toString();
+    data[KEY_IS_JOINED] = this.isJoined;
     return data;
   }
 }
