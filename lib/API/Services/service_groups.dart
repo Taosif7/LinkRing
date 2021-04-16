@@ -46,10 +46,10 @@ class service_groups {
 
     // Add creator as member of group
     model_member member = model_member.fromUser(creator, true);
-    service_members.instance.addMember(group.id, member);
+    await service_members.instance.addMember(group.id, member);
 
     // Add group Id to user
-    service_users.instance.addJoinedGroupId(creator.id, group.id);
+    await service_users.instance.addJoinedGroupId(creator.id, group.id);
 
     return group;
   }

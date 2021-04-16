@@ -35,7 +35,7 @@ class cubit_app extends Cubit<state_app> {
 
     // Load user & its groups
     model_user user = await service_users.instance.getUserByEmail(state.currentUser.email);
-    List<model_group> joinedGroups = await service_groups.instance.getGroupsByIds(state.currentUser.joinedGroupsIds);
+    List<model_group> joinedGroups = await service_groups.instance.getGroupsByIds(user.joinedGroupsIds);
 
     emit(state.copyWith(joinedGroups: joinedGroups, user: user, isLoading: false));
   }
