@@ -1,5 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:link_ring/API/Models/model_group.dart';
+import 'package:link_ring/API/Models/model_member.dart';
+import 'package:link_ring/API/Models/model_user.dart';
+import 'package:link_ring/API/Services/service_members.dart';
+import 'package:link_ring/API/Services/service_users.dart';
 
 class service_groups {
   static service_groups _service_instance;
@@ -28,5 +32,25 @@ class service_groups {
     }
 
     return groups;
+  }
+
+  Future<model_group> createGroup(model_group group, model_user creator) async {
+    // Add creator user id to admins
+    group.admin_users_ids.add(creator.id);
+
+    // Create group in database
+    DocumentReference newGroupDoc = firestore.collection(model_group.KEY_COLLECTION_GROUPS).doc();
+    group.id = newGroupDoc.id;
+    group.creation_time = DateTime.now();
+    await newGroupDoc.set(group.toMap());
+
+    // Add creator as member of group
+    model_member member = model_member.fromUser(creator, true);
+    service_members.instance.addMember(group.id, member);
+
+    // Add group Id to user
+    service_users.instance.addJoinedGroupId(creator.id, group.id);
+
+    return group;
   }
 }

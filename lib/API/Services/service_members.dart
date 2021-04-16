@@ -54,4 +54,19 @@ class service_members {
     updateData.remove(model_member.KEY_JOINED_TIME); // Don't update joined time
     await memberDoc.reference.update(updateData);
   }
+
+  Future<void> addMember(String groupId, model_member member) async {
+    // Find member doc
+    DocumentSnapshot memberDoc = await firestore
+        .collection(model_group.KEY_COLLECTION_GROUPS)
+        .doc(groupId)
+        .collection(model_member.KEY_COLLECTION_MEMBERS)
+        .doc(member.id)
+        .get();
+
+    // return if it already exists
+    if (memberDoc.exists) return;
+    member.joinedOn = DateTime.now();
+    await memberDoc.reference.set(member.toJson());
+  }
 }

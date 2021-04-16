@@ -36,6 +36,22 @@ class service_users {
     return newUser;
   }
 
+  Future<model_user> addJoinedGroupId(String userId, String groupId) async {
+    // Get user groups
+    DocumentSnapshot userDoc = await firestore.collection(model_user.KEY_COLLECTION_USERS).doc(userId).get();
+    model_user user = model_user.fromMap(userDoc.data());
+    List<String> joinedGroups = user.joinedGroupsIds;
+
+    // Add joined group Id and filter list for distinct items
+    joinedGroups.add(groupId);
+    user.joinedGroupsIds = joinedGroups.toSet().toList();
+
+    // Update in database
+    await userDoc.reference.update({model_user.KEY_GROUPS: user.joinedGroupsIds});
+
+    return user;
+  }
+
   Future<void> updateUserToken(String userId, String token) async {
     await firestore.collection(model_user.KEY_COLLECTION_USERS).doc(userId).update({model_user.KEY_MSG_TOKEN: token});
   }
