@@ -30,6 +30,16 @@ class cubit_app extends Cubit<state_app> {
     emit(state.copyWith(joinedGroups: joinedGroups, user: user, isLoading: false));
   }
 
+  Future<void> reloadData() async {
+    emit(state.copyWith(isLoading: true));
+
+    // Load user & its groups
+    model_user user = await service_users.instance.getUserByEmail(state.currentUser.email);
+    List<model_group> joinedGroups = await service_groups.instance.getGroupsByIds(state.currentUser.joinedGroupsIds);
+
+    emit(state.copyWith(joinedGroups: joinedGroups, user: user, isLoading: false));
+  }
+
   void signOut() {
     emit(new state_app(isLoading: false));
   }
