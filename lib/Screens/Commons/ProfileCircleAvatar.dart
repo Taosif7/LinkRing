@@ -17,7 +17,7 @@ class ProfileCircleAvatar extends StatelessWidget {
   ProfileCircleAvatar.fromText(this.text, {this.size = 20}) {
     this.text = this.text.trim();
     if (RegexPatterns.emojis.firstMatch(this.text) != null)
-      this.text = RegexPatterns.emojis.stringMatch(this.text);
+      this.text = RegexPatterns.emojis.firstMatch(this.text).group(0);
     else if (this.text.length >= 2) {
       String finalText = text.substring(0, 2);
       if (text.contains(" "))
