@@ -5,7 +5,6 @@ import 'package:flutter_signin_button/flutter_signin_button.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:link_ring/Cubits/AppState/cubit_app.dart';
 import 'package:link_ring/Screens/Commons/IndefiniteProgressScreen.dart';
-import 'package:link_ring/Screens/HomeScreen/Homepage.dart';
 
 class Screen_SignIn extends StatelessWidget {
   GoogleSignIn _googleSignIn;
@@ -50,7 +49,7 @@ class Screen_SignIn extends StatelessWidget {
       hideIndefiniteProgressScreen(context);
 
       // Move to homescreen on successful Sign-In
-      if (signIn) Navigator.of(context).pushReplacement(new CupertinoPageRoute(builder: (_) => new Screen_HomePage()));
+      if (signIn) Navigator.of(context).pushReplacementNamed('home');
     } catch (error) {
       ScaffoldMessenger.of(context).showSnackBar(new SnackBar(content: Text("Some error occurred")));
       print(error);

@@ -5,9 +5,7 @@ import 'package:link_ring/API/Models/model_group.dart';
 import 'package:link_ring/Cubits/AppState/cubit_app.dart';
 import 'package:link_ring/Cubits/AppState/state_app.dart';
 import 'package:link_ring/Screens/Commons/ProfileCircleAvatar.dart';
-import 'package:link_ring/Screens/CreateGroupScreen.dart';
 import 'package:link_ring/Screens/LinkMessagesScreen/LinkMessagesScreen.dart';
-import 'package:link_ring/Screens/SignInScreen.dart';
 
 class Screen_HomePage extends StatelessWidget {
   @override
@@ -47,10 +45,10 @@ class Screen_HomePage extends StatelessWidget {
             onSelected: (v) {
               switch (v) {
                 case 1:
-                  Navigator.push(context, new CupertinoPageRoute(builder: (x) => Screen_CreateGroup(), fullscreenDialog: true));
+                  Navigator.pushNamed(context, 'createGroup');
                   break;
                 case 2:
-                  Navigator.of(context).pushReplacement(new CupertinoPageRoute(builder: (_) => Screen_SignIn()));
+                  Navigator.pushReplacementNamed(context, 'logout');
                   context.read<cubit_app>().auth.signOut(context);
                   break;
               }
@@ -71,7 +69,11 @@ class Screen_HomePage extends StatelessWidget {
                     leading: ProfileCircleAvatar.fromGroup(group),
                     trailing: Icon(CupertinoIcons.forward, color: Theme.of(context).primaryColor),
                     onTap: () {
-                      Navigator.push(context, new CupertinoPageRoute(builder: (x) => new LinkMessagesScreen(group)));
+                      Navigator.push(
+                          context,
+                          new CupertinoPageRoute(
+                              builder: (x) => new LinkMessagesScreen(group),
+                              settings: RouteSettings(name: '/group/${group.name}')));
                     },
                   );
                 },

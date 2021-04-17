@@ -11,12 +11,12 @@ import 'package:link_ring/Screens/SignInScreen.dart';
 Route<dynamic> routeGenerator(RouteSettings routeSettings) {
   print(routeSettings.name);
   Uri path = Uri.parse(routeSettings.name);
-  if (routeSettings.name == '/' || routeSettings.name == '/home') {
+  if (routeSettings.name == '/' || path.pathSegments.first == 'home') {
     return new CupertinoPageRoute(builder: (c) => Screen_HomePage());
-  } else if (routeSettings.name == '/login' || routeSettings.name == '/logout') {
+  } else if (path.pathSegments.first == 'login' || path.pathSegments.first == 'logout' || path.pathSegments.first == 'signin') {
     return new CupertinoPageRoute(builder: (c) => Screen_SignIn());
-  } else if (routeSettings.name == '/createGroup') {
-    return new CupertinoPageRoute(builder: (c) => Screen_CreateGroup());
+  } else if (path.pathSegments.first == 'createGroup') {
+    return new CupertinoPageRoute(builder: (c) => Screen_CreateGroup(), fullscreenDialog: true);
   } else if (path.pathSegments.first == 'group') {
     if (path.pathSegments.length == 2) {
       // find group and show page
