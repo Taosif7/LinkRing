@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:link_ring/Cubits/AppState/cubit_app.dart';
 import 'package:link_ring/Screens/HomeScreen/Homepage.dart';
 import 'package:link_ring/Screens/SignInScreen.dart';
+import 'package:link_ring/Utils/RouteGenerator.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -23,6 +24,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
+      onGenerateRoute: routeGenerator,
       theme: ThemeData(
           primarySwatch: Colors.green,
           scaffoldBackgroundColor: Colors.blueGrey.shade50,
