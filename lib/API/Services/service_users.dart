@@ -52,6 +52,22 @@ class service_users {
     return user;
   }
 
+  Future<model_user> addWaitingGroupId(String userId, String groupId) async {
+    // Get user groups
+    DocumentSnapshot userDoc = await firestore.collection(model_user.KEY_COLLECTION_USERS).doc(userId).get();
+    model_user user = model_user.fromMap(userDoc.data());
+    List<String> waitingGroups = user.waitingGroupsIds;
+
+    // Add waiting group Id and filter list for distinct items
+    waitingGroups.add(groupId);
+    user.waitingGroupsIds = waitingGroups.toSet().toList();
+
+    // Update in database
+    await userDoc.reference.update({model_user.KEY_WAITING_GROUPS: user.waitingGroupsIds});
+
+    return user;
+  }
+
   Future<void> updateUserToken(String userId, String token) async {
     await firestore.collection(model_user.KEY_COLLECTION_USERS).doc(userId).update({model_user.KEY_MSG_TOKEN: token});
   }
