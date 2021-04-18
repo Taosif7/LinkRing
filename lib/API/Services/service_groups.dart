@@ -17,6 +17,7 @@ class service_groups {
 
   Future<model_group> getGroupById(String id) async {
     DocumentSnapshot doc = await firestore.collection(model_group.KEY_COLLECTION_GROUPS).doc(id).get();
+    if (!doc.exists) return null;
     return model_group.fromMap(doc.data());
   }
 

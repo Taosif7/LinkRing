@@ -38,6 +38,19 @@ class service_members {
     return members;
   }
 
+  Future<model_member> getMemberById(String groupId, String memberId) async {
+    // Find member doc
+    DocumentSnapshot memberDoc = await firestore
+        .collection(model_group.KEY_COLLECTION_GROUPS)
+        .doc(groupId)
+        .collection(model_member.KEY_COLLECTION_MEMBERS)
+        .doc(memberId)
+        .get();
+
+    if (!memberDoc.exists) return null;
+    return new model_member.fromJson(memberDoc.data());
+  }
+
   /// Method to update member properties
   Future<void> updateMemberInfo(String groupId, model_member member) async {
     // Find member doc
