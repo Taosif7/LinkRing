@@ -8,6 +8,7 @@ class model_user {
   static const KEY_MSG_TOKEN = "msg_token";
   static const KEY_JOIN_DATE = "join_date";
   static const KEY_GROUPS = "joined_groups";
+  static const KEY_WAITING_GROUPS = "waiting_groups";
 
   // Properties
   String id;
@@ -17,9 +18,17 @@ class model_user {
   String msg_token;
   DateTime join_date;
   List<String> joinedGroupsIds = [];
+  List<String> waitingGroupsIds = [];
 
   model_user(
-      {this.id, this.name, this.email, this.msg_token, this.joinedGroupsIds = const [], this.join_date, this.profile_pic_url});
+      {this.id,
+      this.name,
+      this.email,
+      this.msg_token,
+      this.joinedGroupsIds = const [],
+      this.waitingGroupsIds = const [],
+      this.join_date,
+      this.profile_pic_url});
 
   model_user.fromMap(Map<String, dynamic> map) {
     this.id = map[KEY_ID];
@@ -29,6 +38,7 @@ class model_user {
     this.profile_pic_url = map[KEY_PROFILE_PIC];
     this.join_date = DateTime.parse(map[KEY_JOIN_DATE]).toLocal();
     this.joinedGroupsIds = List.castFrom(map[KEY_GROUPS]);
+    this.waitingGroupsIds = List.castFrom(map[KEY_WAITING_GROUPS]);
   }
 
   Map<String, dynamic> toMap() {
@@ -39,7 +49,8 @@ class model_user {
       KEY_PROFILE_PIC: this.profile_pic_url,
       KEY_MSG_TOKEN: this.msg_token,
       KEY_JOIN_DATE: this.join_date.toUtc().toString(),
-      KEY_GROUPS: this.joinedGroupsIds
+      KEY_GROUPS: this.joinedGroupsIds,
+      KEY_WAITING_GROUPS: this.waitingGroupsIds
     };
 
     return data;
