@@ -52,6 +52,31 @@ class ProfileCircleAvatar extends StatelessWidget {
   }
 
   Widget getGradientTextChild(String text) {
+    return Container(
+        decoration: BoxDecoration(shape: BoxShape.circle, gradient: getGradient(text)),
+        child: Center(child: Text(text, style: TextStyle(fontWeight: FontWeight.bold))),
+        height: double.infinity,
+        width: double.infinity);
+  }
+
+  static String getLabelText(String text) {
+    if (RegexPatterns.emojis.firstMatch(text) != null) {
+      return RegexPatterns.emojis.stringMatch(text);
+    } else if (text.trim().length >= 2) {
+      String finalText;
+      if (text.trim().contains(" "))
+        finalText = text
+            .trim()
+            .split(RegExp(r'([ ]+)'))
+            .reduce((value, element) => value.substring(0, 1).toUpperCase() + element.substring(0, 1).toUpperCase());
+      else
+        finalText = text.substring(0, 2).toUpperCase();
+      return finalText;
+    } else
+      return "";
+  }
+
+  static LinearGradient getGradient(String text) {
     String hash = (text.hashCode + 200).toString();
     List<Color> gradientColors = [
       Colors.blue,
@@ -67,17 +92,10 @@ class ProfileCircleAvatar extends StatelessWidget {
     ];
     int index1 = int.parse(hash[0]);
     int index2 = int.parse(hash[1]);
-
-    return Container(
-        decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            gradient: LinearGradient(
-              colors: [gradientColors[index1], gradientColors[index2]],
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-            )),
-        child: Center(child: Text(text, style: TextStyle(fontWeight: FontWeight.bold))),
-        height: double.infinity,
-        width: double.infinity);
+    return LinearGradient(
+      colors: [gradientColors[index1], gradientColors[index2]],
+      begin: Alignment.topLeft,
+      end: Alignment.bottomRight,
+    );
   }
 }
