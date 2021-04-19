@@ -5,7 +5,10 @@ import 'package:link_ring/API/Models/model_member.dart';
 class state_linkMessagesScreen {
   // Data members
   List<model_link> links;
-  List<model_member> members;
+  List<model_member> joinedMembers;
+  List<model_member> waitingMembers;
+  List<model_member> adminMembers;
+  bool isAdmin;
   model_group group;
 
   // Flags
@@ -13,24 +16,50 @@ class state_linkMessagesScreen {
   bool isMembersLoading;
 
   state_linkMessagesScreen(this.group,
-      {this.links = const [], this.members = const [], this.isLinksLoading = false, this.isMembersLoading = false});
+      {this.links = const [],
+      this.joinedMembers = const [],
+      this.waitingMembers = const [],
+      this.adminMembers = const [],
+      this.isLinksLoading = false,
+      this.isAdmin = false,
+      this.isMembersLoading = false});
 
   state_linkMessagesScreen addLinks(List<model_link> moreLinks) {
     this.links.addAll(moreLinks);
     return this;
   }
 
-  state_linkMessagesScreen addMembers(List<model_member> moreMembers) {
-    this.members.addAll(moreMembers);
+  state_linkMessagesScreen addJoinedMembers(List<model_member> moreMembers) {
+    this.joinedMembers.addAll(moreMembers);
+    return this;
+  }
+
+  state_linkMessagesScreen addWaitingMembers(List<model_member> moreMembers) {
+    this.waitingMembers.addAll(moreMembers);
+    return this;
+  }
+
+  state_linkMessagesScreen addAdminMembers(List<model_member> moreMembers) {
+    this.adminMembers.addAll(moreMembers);
     return this;
   }
 
   state_linkMessagesScreen copy(
-      {model_group group, List<model_link> links, List<model_member> members, bool isLinksLoading, bool isMembersLoading}) {
+      {model_group group,
+      List<model_link> links,
+      List<model_member> joinedMembers,
+      List<model_member> waitingMembers,
+      List<model_member> adminMembers,
+      bool isLinksLoading,
+      bool isAdmin,
+      bool isMembersLoading}) {
     return new state_linkMessagesScreen(
       group ?? this.group,
       links: links ?? this.links,
-      members: members ?? this.members,
+      joinedMembers: joinedMembers ?? this.joinedMembers,
+      waitingMembers: waitingMembers ?? this.waitingMembers,
+      adminMembers: adminMembers ?? this.adminMembers,
+      isAdmin: isAdmin ?? this.isAdmin,
       isLinksLoading: isLinksLoading ?? this.isLinksLoading,
       isMembersLoading: isMembersLoading ?? this.isMembersLoading,
     );
