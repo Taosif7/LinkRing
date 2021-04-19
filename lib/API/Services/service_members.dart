@@ -12,12 +12,13 @@ class service_members {
 
   static service_members get instance => _service_instance ??= service_members._();
 
-  Future<List<model_member>> getMembers(String groupId, {int quantity = 20, String afterThisId}) async {
+  Future<List<model_member>> getMembers(String groupId, {int quantity = 20, String afterThisId, bool joined = true}) async {
     Query query = firestore
         .collection(model_group.KEY_COLLECTION_GROUPS)
         .doc(groupId)
         .collection(model_member.KEY_COLLECTION_MEMBERS)
         .limit(quantity)
+        .where(model_member.KEY_IS_JOINED, isEqualTo: joined)
         .orderBy(model_member.KEY_NAME);
 
     if (afterThisId != null) {
@@ -49,6 +50,24 @@ class service_members {
 
     if (!memberDoc.exists) return null;
     return new model_member.fromJson(memberDoc.data());
+  }
+
+  Future<List<model_member>> getMembersByIds(String groupId, List<String> memberIds) async {
+    List<model_member> members = [];
+
+    // for every 10 elements, perform where in query to find members
+    for (int i = 0; i < memberIds.length; i += 10) {
+      List<String> subList = memberIds.sublist(i, (i + 10 >= memberIds.length) ? memberIds.length : i + 10).toList();
+      QuerySnapshot qs = await firestore
+          .collection(model_group.KEY_COLLECTION_GROUPS)
+          .doc(groupId)
+          .collection(model_member.KEY_COLLECTION_MEMBERS)
+          .where(model_group.KEY_ID, whereIn: subList)
+          .get();
+      qs.docs.forEach((doc) => members.add(model_member.fromJson(doc.data())));
+    }
+
+    return members;
   }
 
   /// Method to update member properties
