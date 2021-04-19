@@ -41,14 +41,11 @@ Route<dynamic> routeGenerator(RouteSettings routeSettings, BuildContext context)
                 if (group == null)
                   nav.pushReplacement(new PageRouteBuilder(
                     pageBuilder: (ctx, anim1, anim2) => new ErrorScreen(errorMessage: "Group not found!", title: "Not found"),
-                transitionDuration: Duration.zero,
-              ));
-            else
-              nav.pushReplacement(new PageRouteBuilder(
-                pageBuilder: (ctx, anim1, anim2) => new LinkMessagesScreen(group),
-                transitionDuration: Duration.zero,
-              ));
-          }));
+                    transitionDuration: Duration.zero,
+                  ));
+                else
+                  nav.pushReplacement(LinkMessagesScreen.getRoute(context, group));
+              }));
     } else if (path.pathSegments.length == 3) {
       var operationPage = path.pathSegments[2];
       // Settings or members

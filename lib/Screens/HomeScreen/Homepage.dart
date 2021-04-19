@@ -68,13 +68,7 @@ class Screen_HomePage extends StatelessWidget {
                     title: Text(group.name, style: Theme.of(context).textTheme.headline6.copyWith(fontWeight: FontWeight.w400)),
                     leading: ProfileCircleAvatar.fromGroup(group),
                     trailing: Icon(CupertinoIcons.forward, color: Theme.of(context).primaryColor),
-                    onTap: () {
-                      Navigator.push(
-                          context,
-                          new CupertinoPageRoute(
-                              builder: (x) => new LinkMessagesScreen(group),
-                              settings: RouteSettings(name: '/group/${group.name}')));
-                    },
+                    onTap: () => Navigator.push(context, LinkMessagesScreen.getRoute(context, group)),
                   );
                 },
                 shrinkWrap: true,
