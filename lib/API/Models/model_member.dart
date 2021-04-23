@@ -9,6 +9,7 @@ class model_member {
   static const KEY_PROFILE_PIC = "profilePicUrl";
   static const KEY_JOINED_TIME = "joined_on";
   static const KEY_IS_JOINED = "is_joined";
+  static const KEY_PUSH_TOKEN = "push_token";
 
   String id;
   String email;
@@ -16,6 +17,7 @@ class model_member {
   String profilePicUrl;
   DateTime joinedOn;
   bool isJoined;
+  String pushToken;
 
   model_member({this.id, this.email, this.name, this.joinedOn, this.profilePicUrl, this.isJoined});
 
@@ -25,6 +27,7 @@ class model_member {
     this.name = user.name;
     this.profilePicUrl = user.profile_pic_url;
     this.isJoined = isJoined;
+    this.pushToken = user.msg_token;
   }
 
   model_member.fromJson(Map<String, dynamic> json) {
@@ -34,6 +37,7 @@ class model_member {
     profilePicUrl = json[KEY_PROFILE_PIC];
     joinedOn = DateTime.parse(json[KEY_JOINED_TIME]).toLocal();
     isJoined = json[KEY_IS_JOINED] ?? true;
+    pushToken = json[KEY_PUSH_TOKEN];
   }
 
   Map<String, dynamic> toJson() {
@@ -44,6 +48,7 @@ class model_member {
     data[KEY_PROFILE_PIC] = this.profilePicUrl;
     data[KEY_JOINED_TIME] = this.joinedOn?.toUtc()?.toString();
     data[KEY_IS_JOINED] = this.isJoined;
+    data[KEY_PUSH_TOKEN] = this.pushToken;
     return data;
   }
 }
