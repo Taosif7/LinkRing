@@ -50,6 +50,6 @@ public class MainActivity extends FlutterActivity {
     }
 
     public String getPushToken() {
-        return OneSignal.getDeviceState().getPushToken();
+        return OneSignal.getDeviceState().getUserId();
     }
 }
