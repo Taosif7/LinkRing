@@ -27,6 +27,16 @@ class service_users {
     return model_user.fromMap(query.docs.first.data());
   }
 
+  Future<model_user> getUserByPushToken(String pushToken) async {
+    QuerySnapshot query = await firestore
+        .collection(model_user.KEY_COLLECTION_USERS)
+        .where(model_user.KEY_MSG_TOKEN, isEqualTo: pushToken)
+        .limit(1)
+        .get();
+    if (query.docs.length == 0 || !query.docs.first.exists) return null;
+    return model_user.fromMap(query.docs.first.data());
+  }
+
   Future<model_user> createNewUser(String name, String email, String profilePicUrl) async {
     model_user newUser = new model_user(name: name, email: email, profile_pic_url: profilePicUrl, join_date: DateTime.now());
     DocumentReference userDoc = firestore.collection(model_user.KEY_COLLECTION_USERS).doc();

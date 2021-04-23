@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:link_ring/API/Models/model_user.dart';
+import 'package:link_ring/API/Services/service_members.dart';
 import 'package:link_ring/API/Services/service_messaging.dart';
 import 'package:link_ring/API/Services/service_users.dart';
 import 'package:link_ring/Cubits/AppState/cubit_app.dart';
@@ -40,9 +41,22 @@ class cubit_auth extends Cubit<state_auth> {
       user ??=
           await service_users.instance.createNewUser(credentialUser.displayName, credentialUser.email, credentialUser.photoURL);
 
-      // Get user token and update on server
+      // Get push token
       String messagingToken = await service_messaging.instance.getPushToken();
+
+      // find user that holds this push token already,
+      // then unset this token to it, and to groups
+      model_user holder_user = await service_users.instance.getUserByPushToken(messagingToken);
+      if (holder_user != null) {
+        service_users.instance.updateUserToken(holder_user.id, null);
+        service_members.instance.updateMemberTokens(holder_user.joinedGroupsIds, holder_user.id, null);
+        service_members.instance.updateMemberTokens(holder_user.waitingGroupsIds, holder_user.id, null);
+      }
+
+      // set push token update on server and in groups
       service_users.instance.updateUserToken(user.id, messagingToken);
+      service_members.instance.updateMemberTokens(user.joinedGroupsIds, user.id, messagingToken);
+      service_members.instance.updateMemberTokens(user.waitingGroupsIds, user.id, messagingToken);
 
       // Set logged In state
       context.read<cubit_app>().setLoggedInState(credentialUser.email);
@@ -66,6 +80,8 @@ class cubit_auth extends Cubit<state_auth> {
     // Update signOut
     model_user user = context.read<cubit_app>().state.currentUser;
     await service_users.instance.updateUserToken(user.id, null);
+    service_members.instance.updateMemberTokens(user.joinedGroupsIds, user.id, null);
+    service_members.instance.updateMemberTokens(user.waitingGroupsIds, user.id, null);
 
     // Set app signOut state
     await FirebaseAuth.instance.signOut();

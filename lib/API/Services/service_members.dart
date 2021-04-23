@@ -72,19 +72,26 @@ class service_members {
 
   /// Method to update member properties
   Future<void> updateMemberInfo(String groupId, model_member member) async {
-    // Find member doc
-    DocumentSnapshot memberDoc = await firestore
+    Map<String, dynamic> updateData = member.toJson();
+    updateData.remove(model_member.KEY_JOINED_TIME); // Don't update joined time
+    await firestore
         .collection(model_group.KEY_COLLECTION_GROUPS)
         .doc(groupId)
         .collection(model_member.KEY_COLLECTION_MEMBERS)
         .doc(member.id)
-        .get();
+        .update(updateData);
+  }
 
-    // Update if it exists
-    if (!memberDoc.exists) return;
-    Map<String, dynamic> updateData = member.toJson();
-    updateData.remove(model_member.KEY_JOINED_TIME); // Don't update joined time
-    await memberDoc.reference.update(updateData);
+  /// Method to update tokens of given user in given groups
+  Future<void> updateMemberTokens(List<String> groupIds, String userId, String token) async {
+    await Future.forEach(groupIds, (gid) async {
+      await firestore
+          .collection(model_group.KEY_COLLECTION_GROUPS)
+          .doc(gid)
+          .collection(model_member.KEY_COLLECTION_MEMBERS)
+          .doc(userId)
+          .update({model_member.KEY_PUSH_TOKEN: token});
+    });
   }
 
   Future<void> addMember(String groupId, model_member member) async {
