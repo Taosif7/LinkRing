@@ -8,4 +8,6 @@
     <color name="text_heading">#000</color>
     <color name="text_body">#333</color>
     <color name="text_button">#fff</color>
+    <color name="connect_btn">#4CAF50</color>
+    <color name="reject_btn">#EF5350</color>
 </resources>
