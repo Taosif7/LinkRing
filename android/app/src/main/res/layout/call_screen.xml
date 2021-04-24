@@ -1,19 +1,155 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/ring_screen_bg"
     android:keepScreenOn="true"
-    android:theme="@style/Theme.AppCompat.DayNight.NoActionBar"
+    android:theme="@style/Theme.AppCompat.NoActionBar"
     tools:context=".LinkRingCallScreen">
 
+    <View
+        android:id="@+id/call_screen_bg"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/grad_list" />
+
     <TextView
+        android:id="@+id/call_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="30dp"
+        android:gravity="center"
         android:text="Incoming Call"
-        android:textAlignment="center"
+        android:textColor="@color/text_heading"
         android:textSize="30sp"
         android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/group_pic_text"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:layout_below="@id/call_title"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="20dp"
+        android:background="@drawable/borders_large"
+        android:backgroundTint="@color/ring_screen_connect_btn_bg"
+        android:gravity="center"
+        android:maxLength="2"
+        android:text="font"
+        android:textAllCaps="true"
+        android:textColor="@color/text_button"
+        android:textSize="40sp" />
+
+    <com.google.android.material.imageview.ShapeableImageView
+        android:id="@+id/group_pic"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:layout_below="@id/call_title"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="20dp"
+        android:scaleType="centerCrop"
+        app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.App.CornerSize50Percent" />
+
+    <TextView
+        android:id="@+id/group_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/group_pic_text"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="15dp"
+        android:gravity="center"
+        android:text="Group 1"
+        android:textColor="@color/text_heading"
+        android:textSize="20sp" />
+
+
+    <TextView
+        android:id="@+id/link_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/link_text"
+        android:layout_marginHorizontal="20dp"
+        android:gravity="center"
+        android:padding="10dp"
+        android:text="Random Link title"
+        android:textColor="@color/text_heading" />
+
+    <TextView
+        android:id="@+id/link_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_marginHorizontal="20dp"
+        android:background="@drawable/borders_small"
+        android:backgroundTint="@color/ring_screen_surface"
+        android:gravity="center"
+        android:padding="10dp"
+        android:text="https://linkring.taosif7.com"
+        android:textColor="@color/text_body" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/link_text"
+        android:layout_marginTop="5dp"
+        android:gravity="center_horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="5dp"
+            android:layout_marginRight="5dp"
+            android:text="Ring from"
+            android:textColor="@color/text_body" />
+
+        <TextView
+            android:id="@+id/sender_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Taosif Jamal"
+            android:textColor="@color/text_heading"
+            android:textStyle="bold" />
+
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/connect_btn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/reject_btn"
+        android:layout_marginHorizontal="40dp"
+        android:background="@drawable/borders_large"
+        android:clickable="true"
+        android:foreground="@drawable/borders_large_ripple"
+        android:gravity="center"
+        android:textAllCaps="true"
+        android:paddingVertical="15dp"
+        android:text="Connect"
+        android:textColor="@color/text_button"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        app:backgroundTint="@color/ring_screen_connect_btn_bg" />
+
+    <TextView
+        android:id="@+id/reject_btn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_marginHorizontal="40dp"
+        android:layout_marginTop="15dp"
+        android:layout_marginBottom="60dp"
+        android:background="@drawable/borders_large"
+        android:clickable="true"
+        android:foreground="@drawable/borders_large_ripple"
+        android:gravity="center"
+        android:paddingVertical="15dp"
+        android:text="Ignore"
+        android:textAllCaps="true"
+        android:textColor="@color/text_button"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        app:backgroundTint="@color/ring_screen_reject_btn_bg" />
 
 </RelativeLayout>

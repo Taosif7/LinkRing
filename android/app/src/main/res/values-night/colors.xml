@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="ring_screen_bg">#303030</color>
+    <color name="ring_screen_bg_shade">#0F4513</color>
+    <color name="ring_screen_surface">#11ffffff</color>
+    <color name="ring_screen_connect_btn_bg">#81C784</color>
+    <color name="ring_screen_reject_btn_bg">#E57373</color>
+    <color name="text_heading">#fff</color>
+    <color name="text_body">#aaa</color>
+    <color name="text_button">#000</color>
+</resources>

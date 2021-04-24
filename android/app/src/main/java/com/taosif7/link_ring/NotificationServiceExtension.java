@@ -16,6 +16,8 @@ import com.onesignal.OSNotification;
 import com.onesignal.OSNotificationReceivedEvent;
 import com.onesignal.OneSignal.OSRemoteNotificationReceivedHandler;
 
+import static com.taosif7.link_ring.LinkRingCallScreen.CALL_SCREEN_NOTIF_ID;
+
 public class NotificationServiceExtension implements OSRemoteNotificationReceivedHandler {
 
     @Override
@@ -30,6 +32,7 @@ public class NotificationServiceExtension implements OSRemoteNotificationReceive
 
         // TODO: Identify type of notification from data and show call screen
         Intent i = new Intent(context, LinkRingCallScreen.class);
+        i.putExtra("data", mutableNotification.getAdditionalData().toString());
         i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         PendingIntent pi = PendingIntent.getActivity(context, 4564, i, PendingIntent.FLAG_UPDATE_CURRENT);
         NotificationManager nm = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
@@ -55,7 +58,7 @@ public class NotificationServiceExtension implements OSRemoteNotificationReceive
 
         Notification alarmNotification = notificationBuilder.build();
 
-        nm.notify(4446, alarmNotification);
+        nm.notify(CALL_SCREEN_NOTIF_ID, alarmNotification);
 
         // If complete isn't call within a time period of 25 seconds, OneSignal internal logic will show the original notification
         // To omit displaying a notification, pass `null` to complete()
