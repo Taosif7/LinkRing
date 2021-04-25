@@ -1,6 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.taosif7.link_ring">
 
+    <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
     <uses-permission android:name="android.permission.USE_FULL_SCREEN_INTENT" />
@@ -48,13 +49,15 @@
 
                 <data
                     android:host="linkring.taosif7.com"
-                    android:pathPrefix="/joingroup"
                     android:pathPattern="/joingroup?id=.*"
+                    android:pathPrefix="/joingroup"
                     android:scheme="http" />
                 <data android:scheme="https" />
             </intent-filter>
         </activity>
 
+
+        <receiver android:name=".CallBroadcastReceiver" />
 
         <activity
             android:name=".LinkRingCallScreen"

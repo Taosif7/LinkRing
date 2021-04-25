@@ -1,10 +1,11 @@
 package com.taosif7.link_ring;
 
 import android.app.KeyguardManager;
-import android.app.NotificationManager;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.drawable.AnimationDrawable;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.PowerManager;
@@ -17,16 +18,26 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.bumptech.glide.Glide;
-import com.taosif7.link_ring.models.model_group;
-import com.taosif7.link_ring.models.model_link;
-import com.taosif7.link_ring.models.model_member;
+import com.taosif7.link_ring.models.model_callNotification;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import static com.taosif7.link_ring.CallBroadcastReceiver.ACTION_CALL_CONNECT;
+import static com.taosif7.link_ring.CallBroadcastReceiver.ACTION_CALL_HIDE_UI;
+import static com.taosif7.link_ring.CallBroadcastReceiver.ACTION_CALL_IGNORE;
+
 public class LinkRingCallScreen extends AppCompatActivity {
 
-    public static final int CALL_SCREEN_NOTIF_ID = 4654;
+    BroadcastReceiver callActionsReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String action = intent.getAction();
+            if (action.equals(ACTION_CALL_HIDE_UI)) {
+                finish();
+            }
+        }
+    };
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -82,66 +93,61 @@ public class LinkRingCallScreen extends AppCompatActivity {
         animationDrawable.setExitFadeDuration(2000);
         animationDrawable.start();
 
-        // Get notification manager for cancelling call notification
-        NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-
         // fetch link, sender and group from data json
         try {
             JSONObject dataObject = new JSONObject(data);
-            model_link link = new model_link(dataObject.optJSONObject("link"));
-            model_group group = new model_group(dataObject.optJSONObject("group"));
-            model_member sender = new model_member(dataObject.optJSONObject("sender"));
+            model_callNotification callData = new model_callNotification(dataObject);
 
-            ((TextView) findViewById(R.id.link_text)).setText(link.link);
-            ((TextView) findViewById(R.id.sender_name)).setText(sender.name);
-            ((TextView) findViewById(R.id.group_name)).setText(group.name);
-            ((TextView) findViewById(R.id.group_pic_text)).setText(group.name);
-            ((TextView) findViewById(R.id.link_title)).setText(link.name);
-            findViewById(R.id.link_title).setVisibility((link.name.equals("null") || link.name.length() == 0) ? View.GONE : View.VISIBLE);
+            ((TextView) findViewById(R.id.link_text)).setText(callData.link.link);
+            ((TextView) findViewById(R.id.sender_name)).setText(callData.sender.name);
+            ((TextView) findViewById(R.id.group_name)).setText(callData.group.name);
+            ((TextView) findViewById(R.id.group_pic_text)).setText(callData.group.name);
+            ((TextView) findViewById(R.id.link_title)).setText(callData.link.name);
+            findViewById(R.id.link_title).setVisibility(!callData.link.hasName ? View.GONE : View.VISIBLE);
 
-            if (group.iconUrl != null && group.iconUrl.length() > 0) {
+            if (callData.group.iconUrl != null && callData.group.iconUrl.length() > 0) {
                 Glide.with(this)
-                        .load(group.iconUrl)
+                        .load(callData.group.iconUrl)
                         .into((ImageView) findViewById(R.id.group_pic));
             } else findViewById(R.id.group_pic).setVisibility(View.GONE);
 
             findViewById(R.id.connect_btn).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    notificationManager.cancel(CALL_SCREEN_NOTIF_ID);
-                    Intent linkIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(link.link));
-                    startActivity(linkIntent);
-                    finish();
+                    Intent callHideIntent = new Intent(LinkRingCallScreen.this, CallBroadcastReceiver.class);
+                    callHideIntent.setAction(ACTION_CALL_CONNECT);
+                    callHideIntent.putExtra("data", data);
+                    sendBroadcast(callHideIntent);
                 }
             });
             findViewById(R.id.reject_btn).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    notificationManager.cancel(CALL_SCREEN_NOTIF_ID);
-                    finish();
+                    // Send broadcast intent for
+                    Intent callHideIntent = new Intent(LinkRingCallScreen.this, CallBroadcastReceiver.class);
+                    callHideIntent.setAction(ACTION_CALL_IGNORE);
+                    callHideIntent.putExtra("data", data);
+                    sendBroadcast(callHideIntent);
                 }
             });
 
         } catch (JSONException e) {
-            notificationManager.cancel(CALL_SCREEN_NOTIF_ID);
             e.printStackTrace();
             finish();
-            return;
         }
     }
 
     @Override
-    protected void onResume() {
-        super.onResume();
+    protected void onStart() {
+        super.onStart();
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(ACTION_CALL_HIDE_UI);
+        registerReceiver(callActionsReceiver, filter);
     }
 
     @Override
-    protected void onPause() {
-        super.onPause();
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
+    protected void onStop() {
+        unregisterReceiver(callActionsReceiver);
+        super.onStop();
     }
 }
