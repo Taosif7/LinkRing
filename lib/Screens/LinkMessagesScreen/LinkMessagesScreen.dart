@@ -12,9 +12,11 @@ import 'package:link_ring/Cubits/LinkMessagesScreen/state_linkMessagesScreen.dar
 import 'package:link_ring/Screens/Commons/CupertinoBackButton.dart';
 import 'package:link_ring/Screens/Commons/ProfileCircleAvatar.dart';
 import 'package:link_ring/Screens/LinkMessagesScreen/GroupInfoScreen.dart';
+import 'package:link_ring/Screens/LinkMessagesScreen/SendLinkScreen.dart';
 import 'package:link_ring/Screens/LinkMessagesScreen/widgets/LinkMessageItem.dart';
-import 'package:link_ring/Screens/LinkMessagesScreen/widgets/RoundIconLabelButton.dart';
 import 'package:url_launcher/url_launcher.dart';
+
+import 'file:///D:/AndroidProjects/link_ring/lib/Screens/Commons/RoundIconLabelButton.dart';
 
 class LinkMessagesScreen extends StatefulWidget {
   model_group group;
@@ -136,13 +138,16 @@ class _LinkMessagesScreenState extends State<LinkMessagesScreen> with SingleTick
                     child: AnimatedCrossFade(
                       duration: Duration(milliseconds: 300),
                       secondChild: !context.read<cubit_linkMessagesScreen>().state.isAdmin
-                          ? Center(child: Text("Tap a link"))
+                          ? Center(child: Text("Tap a link for options"))
                           : Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                RoundIconLabelButton(Icon(Icons.link), "New Link", onTap: () async {}),
-                                SizedBox(width: 10),
-                                RoundIconLabelButton(Icon(Icons.paste_rounded), "From Clipboard", onTap: () async {}),
+                                RoundIconLabelButton(Icon(Icons.add_link), "New Link", onTap: () async {
+                                  Navigator.push(
+                                      context,
+                                      SendLinkScreen.getRoute(
+                                          context, widget.group, (await Clipboard.getData("text/plain")).text));
+                                }),
                               ],
                             ),
                       firstChild: Row(
