@@ -4,6 +4,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:http/http.dart' as http;
 import 'package:link_ring/API/Models/model_group.dart';
 import 'package:link_ring/API/Models/model_link.dart';
+import 'package:link_ring/API/Models/model_member.dart';
+import 'package:link_ring/API/Services/service_members.dart';
 import 'package:link_ring/Utils/Constants.dart';
 
 class service_links {
@@ -40,7 +42,8 @@ class service_links {
     return links;
   }
 
-  Future<List<model_link>> getLinksForGroup(String groupId, {int quantity = 20, String lastItemId}) async {
+  Future<List<model_link>> getLinksForGroup(String groupId,
+      {int quantity = 20, String lastItemId, List<model_member> senderMembers}) async {
     List<model_link> links = [];
     Query query = firestore
         .collection(model_group.KEY_COLLECTION_GROUPS)
@@ -60,7 +63,16 @@ class service_links {
     }
     QuerySnapshot snapshot = await query.get();
 
-    snapshot.docs.forEach((element) => links.add(new model_link.fromMap(element.data())));
+    await Future.forEach(snapshot.docs, (element) async {
+      model_link link = new model_link.fromMap(element.data());
+      model_member sender = senderMembers.firstWhere((senderModel) => senderModel.id == link.sent_by, orElse: () => null);
+      if (sender == null) {
+        sender = await service_members.instance.getMemberById(groupId, link.sent_by);
+        senderMembers.add(sender);
+      }
+      link.senderMember = sender;
+      links.add(link);
+    });
     return links;
   }
 
@@ -72,8 +84,8 @@ class service_links {
         "Authorization": "Basic " + SERVER_API_SECRET,
       },
       body: jsonEncode({
-        "link_name": linkTitle,
-        "link": link,
+        "link_name": linkTitle.trim(),
+        "link": link.trim(),
         "groupId": groupId,
         "senderId": senderId,
       }),
