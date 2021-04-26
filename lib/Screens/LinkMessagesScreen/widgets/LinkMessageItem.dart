@@ -8,8 +8,14 @@ import 'package:url_launcher/url_launcher.dart';
 
 class LinkMessageItem extends StatelessWidget {
   model_link link;
+  bool showLeading;
+  bool selected;
 
-  LinkMessageItem(this.link);
+  Function onLinkTap;
+
+  LinkMessageItem(this.link, {this.showLeading = true, this.selected = false, onMessageTap(model_link link)}) {
+    this.onLinkTap = onMessageTap;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -17,11 +23,14 @@ class LinkMessageItem extends StatelessWidget {
       padding: const EdgeInsets.only(bottom: 5),
       child: Row(
         children: [
-          Row(children: [
-            ProfileCircleAvatar.fromUser(context.read<cubit_app>().state.currentUser, size: 15),
-            SizedBox(width: 5),
-            Icon(Icons.link, size: 15),
-          ]),
+          Opacity(
+            opacity: this.showLeading ? 1 : 0,
+            child: Row(children: [
+              ProfileCircleAvatar.fromUser(context.read<cubit_app>().state.currentUser, size: 15),
+              SizedBox(width: 5),
+              Icon(Icons.link, size: 15),
+            ]),
+          ),
           SizedBox(width: 5),
           Expanded(
               child: GestureDetector(
@@ -29,12 +38,14 @@ class LinkMessageItem extends StatelessWidget {
               // Open link directly
               if (await canLaunch(link.link)) await launch(link.link);
             },
-            onTap: () {
-              // Todo: Show tools or something
+            onTap: () => onLinkTap(link),
+            onLongPress: () {
+              onLinkTap(link);
             },
             child: Container(
               padding: EdgeInsets.all(8),
-              decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(10)),
+              decoration: BoxDecoration(
+                  color: selected ? Colors.blue.withAlpha(30) : Colors.white, borderRadius: BorderRadius.circular(10)),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [

@@ -8,6 +8,7 @@ import 'package:link_ring/Cubits/LinkMessagesScreen/state_linkMessagesScreen.dar
 
 class cubit_linkMessagesScreen extends Cubit<state_linkMessagesScreen> {
   model_user currentUser;
+  bool allLinksLoaded = false;
 
   cubit_linkMessagesScreen(state_linkMessagesScreen initialState, this.currentUser) : super(initialState) {
     loadInitialData();
@@ -33,5 +34,13 @@ class cubit_linkMessagesScreen extends Cubit<state_linkMessagesScreen> {
       joinedMembers: joinedMembers,
       waitingMembers: waitingMembers,
     ));
+  }
+
+  Future<void> loadMoreLinks() async {
+    if (allLinksLoaded) return;
+    emit(state.copy(isLinksLoading: true));
+    List<model_link> links = await service_links.instance.getLinksForGroup(state.group.id, lastItemId: state.links.last.id);
+    if (links.length == 0) allLinksLoaded = true;
+    emit(state.addLinks(links).copy(isLinksLoading: false));
   }
 }
