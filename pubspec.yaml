@@ -35,6 +35,7 @@ dependencies:
 
   # Native dependencies
   url_launcher: ^6.0.3
+  receive_sharing_intent: ^1.4.5
 
   # App State Management
   flutter_bloc: ^7.0.0

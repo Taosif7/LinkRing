@@ -3,9 +3,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:link_ring/Cubits/AppState/cubit_app.dart';
+import 'package:link_ring/Screens/GroupPickerScreen.dart';
 import 'package:link_ring/Screens/HomeScreen/Homepage.dart';
+import 'package:link_ring/Screens/LinkMessagesScreen/LinkMessagesScreen.dart';
+import 'package:link_ring/Screens/LinkMessagesScreen/SendLinkScreen.dart';
 import 'package:link_ring/Screens/SignInScreen.dart';
+import 'package:link_ring/Utils/RegexPatterns.dart';
 import 'package:link_ring/Utils/RouteGenerator.dart';
+import 'package:receive_sharing_intent/receive_sharing_intent.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -19,10 +24,27 @@ void main() async {
   runApp(BlocProvider<cubit_app>(create: (c) => cubit_app(), child: MyApp()));
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
+  @override
+  _MyAppState createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  final GlobalKey<NavigatorState> navigatorKey = new GlobalKey<NavigatorState>();
+
+  @override
+  void initState() {
+    // Handle intent shared text
+    ReceiveSharingIntent.getInitialText().then((url) => HandleSharedText(url));
+    ReceiveSharingIntent.getTextStream().listen((url) => HandleSharedText(url));
+
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      navigatorKey: navigatorKey,
       debugShowCheckedModeBanner: false,
       onGenerateRoute: (routeSettings) => routeGenerator(routeSettings, context),
       theme: ThemeData(
@@ -52,5 +74,17 @@ class MyApp extends StatelessWidget {
               textTheme: TextTheme(headline6: TextStyle(color: Colors.blueGrey, fontSize: 26, fontWeight: FontWeight.bold)))),
       home: context.read<cubit_app>().auth.state.isLoggedIn ? Screen_HomePage() : Screen_SignIn(),
     );
+  }
+
+  void HandleSharedText(String url) {
+    if (RegexPatterns.links.hasMatch(url)) {
+      navigatorKey.currentState.push(GroupPickerScreen.getRoute(context, showOnlyOwnedGroups: true)).then((group) {
+        if (group != null) {
+          navigatorKey.currentState.push(SendLinkScreen.getRoute(context, group, url)).then((value) {
+            navigatorKey.currentState.push(LinkMessagesScreen.getRoute(context, group));
+          });
+        }
+      });
+    }
   }
 }
