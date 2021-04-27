@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:link_ring/API/Models/model_group.dart';
 import 'package:link_ring/API/Models/model_member.dart';
@@ -73,7 +74,11 @@ class GroupInfoScreen extends StatelessWidget {
           sliver: SliverToBoxAdapter(
             child: ColorButton(
               color: Colors.blueAccent,
-              onPressed: () {},
+              onPressed: () {
+                Clipboard.setData(new ClipboardData(text: "http://LinkRing.Taosif7.com/joingroup?id=" + group.id));
+                ScaffoldMessenger.of(context)
+                    .showSnackBar(new SnackBar(content: Text("Link Copied"), behavior: SnackBarBehavior.floating));
+              },
               label: 'Invite People',
             ),
           ),

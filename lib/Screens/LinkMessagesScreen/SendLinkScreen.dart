@@ -4,15 +4,15 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:link_ring/API/Models/model_group.dart';
 import 'package:link_ring/API/Services/service_links.dart';
 import 'package:link_ring/Cubits/AppState/cubit_app.dart';
-import 'package:link_ring/Cubits/LinkMessagesScreen/cubit_linkMessagesScreen.dart';
 import 'package:link_ring/Screens/Commons/Buttons.dart';
 import 'package:link_ring/Utils/RegexPatterns.dart';
 
 class SendLinkScreen extends StatefulWidget {
   String link;
+  model_group group;
   TextEditingController _linkEditingController = new TextEditingController();
 
-  SendLinkScreen(this.link) {
+  SendLinkScreen(this.link, this.group) {
     if (RegexPatterns.links.hasMatch(this.link)) _linkEditingController = new TextEditingController(text: this.link);
   }
 
@@ -22,8 +22,8 @@ class SendLinkScreen extends StatefulWidget {
   static CupertinoPageRoute getRoute(BuildContext context, model_group group, String link) {
     return new CupertinoPageRoute(
         fullscreenDialog: true,
-        builder: (x) => BlocProvider(create: (c) => context.read<cubit_linkMessagesScreen>(), child: SendLinkScreen(link)),
-        settings: RouteSettings(name: 'group/${group.id}/new'));
+        builder: (x) => SendLinkScreen(link, group),
+        settings: RouteSettings(name: 'group/${group.id}/new?link=$link'));
   }
 }
 
@@ -93,7 +93,7 @@ class _SendLinkScreenState extends State<SendLinkScreen> {
                           setState(() => linkSending = true);
 
                           bool result = await service_links.instance.sendLink(
-                              context.read<cubit_linkMessagesScreen>().state.group.id,
+                              widget.group.id,
                               context.read<cubit_app>().state.currentUser.id,
                               widget._linkEditingController.text,
                               _titleEditingController.text);
