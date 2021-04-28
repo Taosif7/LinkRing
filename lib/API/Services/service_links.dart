@@ -6,6 +6,7 @@ import 'package:link_ring/API/Models/model_group.dart';
 import 'package:link_ring/API/Models/model_link.dart';
 import 'package:link_ring/API/Models/model_member.dart';
 import 'package:link_ring/API/Services/service_members.dart';
+import 'package:link_ring/API/Services/service_users.dart';
 import 'package:link_ring/Utils/Constants.dart';
 
 class service_links {
@@ -68,6 +69,7 @@ class service_links {
       model_member sender = senderMembers.firstWhere((senderModel) => senderModel.id == link.sent_by, orElse: () => null);
       if (sender == null) {
         sender = await service_members.instance.getMemberById(groupId, link.sent_by);
+        sender ??= model_member.fromUser(await service_users.instance.getUserById(link.sent_by), false);
         senderMembers.add(sender);
       }
       link.senderMember = sender;

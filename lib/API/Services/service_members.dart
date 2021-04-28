@@ -156,4 +156,19 @@ class service_members {
     await service_users.instance.removeJoinedGroupId(memberId, groupId);
     await service_users.instance.addWaitingGroupId(memberId, groupId);
   }
+
+  Future<List<model_member>> searchMemberByName(String groupId, String name) async {
+    List<model_member> members = [];
+
+    QuerySnapshot qs = await firestore
+        .collection(model_group.KEY_COLLECTION_GROUPS)
+        .doc(groupId)
+        .collection(model_member.KEY_COLLECTION_MEMBERS)
+        .orderBy(model_member.KEY_NAME)
+        .startAt([name]).endAt([name + "\uf8ff"]).get();
+
+    qs.docs.forEach((element) => members.add(new model_member.fromJson(element.data())));
+
+    return members;
+  }
 }
