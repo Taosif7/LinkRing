@@ -4,10 +4,13 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:link_ring/API/Models/model_group.dart';
 import 'package:link_ring/API/Models/model_member.dart';
+import 'package:link_ring/API/Services/service_members.dart';
 import 'package:link_ring/Cubits/LinkMessagesScreen/cubit_linkMessagesScreen.dart';
+import 'package:link_ring/Cubits/LinkMessagesScreen/state_linkMessagesScreen.dart';
 import 'package:link_ring/Screens/Commons/Buttons.dart';
 import 'package:link_ring/Screens/Commons/CupertinoBackButton.dart';
 import 'package:link_ring/Screens/Commons/ProfileCircleAvatar.dart';
+import 'package:link_ring/Screens/MemberListScreen.dart';
 import 'package:link_ring/Utils/DateFormatConstants.dart';
 
 class GroupInfoScreen extends StatelessWidget {
@@ -56,17 +59,129 @@ class GroupInfoScreen extends StatelessWidget {
                   ],
                 ))),
         SliverToBoxAdapter(
-          child: BuildMembersContainer(context, "Admins", context.read<cubit_linkMessagesScreen>().state.adminMembers, () {}),
+          child: BlocBuilder<cubit_linkMessagesScreen, state_linkMessagesScreen>(
+            builder: (ctx, state) => BuildMembersContainer(context, "Admins", state.adminMembers, () {
+              Navigator.of(context).push(new CupertinoPageRoute(
+                  fullscreenDialog: true,
+                  builder: (ctx) => new MemberListScreen(
+                        "Admins",
+                        state.adminMembers,
+                        buttons: state.isAdmin
+                            ? [
+                                {
+                                  "Remove admin": (member) {
+                                    if (state.group.admin_users_ids.length == 1) {
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(new SnackBar(content: Text("Can't remove only admin of group")));
+                                      return false;
+                                    } else {
+                                      context.read<cubit_linkMessagesScreen>().removeAdmin(member);
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(new SnackBar(content: Text("Removed from admin")));
+                                      return true;
+                                    }
+                                  }
+                                },
+                              ]
+                            : [],
+                      )));
+            }),
+          ),
         ),
         SliverPadding(padding: EdgeInsets.only(bottom: 20)),
         SliverToBoxAdapter(
-          child: BuildMembersContainer(context, "Members", context.read<cubit_linkMessagesScreen>().state.joinedMembers, () {}),
+          child: BlocBuilder<cubit_linkMessagesScreen, state_linkMessagesScreen>(
+            builder: (ctx, state) => BuildMembersContainer(context, "Members", state.joinedMembers, () {
+              Navigator.of(context).push(new CupertinoPageRoute(
+                  fullscreenDialog: true,
+                  builder: (ctx) => new MemberListScreen(
+                        "Joined members",
+                        state.joinedMembers,
+                        hideActionsForMembers: [context.read<cubit_linkMessagesScreen>().currentUser.id],
+                        onSearch: (query) => service_members.instance.searchMemberByName(group.id, query),
+                        buttons: state.isAdmin
+                            ? [
+                                {
+                                  "Make admin": (member) {
+                                    if (state.group.admin_users_ids.contains(member.id)) {
+                                      ScaffoldMessenger.of(context).showSnackBar(new SnackBar(content: Text("Already an admin")));
+                                    } else {
+                                      context.read<cubit_linkMessagesScreen>().addAdmin(member);
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(new SnackBar(content: Text("Promoted to admin")));
+                                    }
+                                    return false;
+                                  }
+                                },
+                                {
+                                  "Un-Admit": (member) {
+                                    if (state.group.admin_users_ids.contains(member.id) &&
+                                        state.group.admin_users_ids.length == 1) {
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(new SnackBar(content: Text("Can't remove only admin of group")));
+                                      return false;
+                                    } else {
+                                      context.read<cubit_linkMessagesScreen>().unAdmitMember(member);
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(new SnackBar(content: Text("Moved to waiting list")));
+                                      return true;
+                                    }
+                                  }
+                                },
+                                {
+                                  "Delete": (member) {
+                                    if (state.group.admin_users_ids.contains(member.id) &&
+                                        state.group.admin_users_ids.length == 1) {
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(new SnackBar(content: Text("Can't remove only admin of group")));
+                                      return false;
+                                    } else {
+                                      context.read<cubit_linkMessagesScreen>().removeMember(member);
+                                      ScaffoldMessenger.of(context).showSnackBar(new SnackBar(content: Text("Member removed")));
+                                      return true;
+                                    }
+                                  }
+                                },
+                              ]
+                            : [],
+                      )));
+            }),
+          ),
         ),
         SliverPadding(padding: EdgeInsets.only(bottom: 20)),
         if (context.read<cubit_linkMessagesScreen>().state.isAdmin)
           SliverToBoxAdapter(
-            child: BuildMembersContainer(
-                context, "Waiting List", context.read<cubit_linkMessagesScreen>().state.waitingMembers, () {}),
+            child: BlocBuilder<cubit_linkMessagesScreen, state_linkMessagesScreen>(
+              builder: (ctx, state) => BuildMembersContainer(context, "Waiting list", state.waitingMembers, () {
+                Navigator.of(context).push(new CupertinoPageRoute(
+                    fullscreenDialog: true,
+                    builder: (ctx) => new MemberListScreen(
+                          "Waiting List",
+                          state.waitingMembers,
+                          hideActionsForMembers: [context.read<cubit_linkMessagesScreen>().currentUser.id],
+                          onSearch: (query) => service_members.instance.searchMemberByName(group.id, query),
+                          buttons: state.isAdmin
+                              ? [
+                                  {
+                                    "Admit": (member) {
+                                      context.read<cubit_linkMessagesScreen>().admitMember(member);
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(new SnackBar(content: Text("Member joined the group")));
+                                      return true;
+                                    }
+                                  },
+                                  {
+                                    "Delete": (member) {
+                                      context.read<cubit_linkMessagesScreen>().removeAdmin(member);
+                                      ScaffoldMessenger.of(context).showSnackBar(new SnackBar(content: Text("Member removed")));
+                                      return true;
+                                    }
+                                  },
+                                ]
+                              : [],
+                        )));
+              }),
+            ),
           ),
         SliverPadding(padding: EdgeInsets.only(bottom: 20)),
         SliverPadding(
