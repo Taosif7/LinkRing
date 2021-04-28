@@ -54,4 +54,34 @@ class service_groups {
 
     return group;
   }
+
+  Future<void> addAdmin(model_group group, String memberId) async {
+    // Get list of admins
+    List<String> adminMembers = group.admin_users_ids;
+
+    // Add admin to list
+    adminMembers.add(memberId);
+    group.admin_users_ids = adminMembers.toSet().toList();
+
+    // Update group
+    await firestore
+        .collection(model_group.KEY_COLLECTION_GROUPS)
+        .doc(group.id)
+        .update({model_group.KEY_ADMIN_USERS: group.admin_users_ids});
+  }
+
+  Future<void> removeAdmin(model_group group, String adminMemberId) async {
+    // Get list of admins
+    List<String> adminMembers = group.admin_users_ids;
+
+    // remove admin from the list
+    adminMembers.remove(adminMemberId);
+    group.admin_users_ids = adminMembers.toSet().toList();
+
+    // Update group
+    await firestore
+        .collection(model_group.KEY_COLLECTION_GROUPS)
+        .doc(group.id)
+        .update({model_group.KEY_ADMIN_USERS: group.admin_users_ids});
+  }
 }

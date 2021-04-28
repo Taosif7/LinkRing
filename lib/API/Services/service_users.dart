@@ -62,6 +62,22 @@ class service_users {
     return user;
   }
 
+  Future<model_user> removeJoinedGroupId(String userId, String groupId) async {
+    // Get user groups
+    DocumentSnapshot userDoc = await firestore.collection(model_user.KEY_COLLECTION_USERS).doc(userId).get();
+    model_user user = model_user.fromMap(userDoc.data());
+    List<String> joinedGroups = user.joinedGroupsIds;
+
+    // remove joined group Id
+    joinedGroups.remove(groupId);
+    user.joinedGroupsIds = joinedGroups.toSet().toList();
+
+    // Update in database
+    await userDoc.reference.update({model_user.KEY_GROUPS: user.joinedGroupsIds});
+
+    return user;
+  }
+
   Future<model_user> addWaitingGroupId(String userId, String groupId) async {
     // Get user groups
     DocumentSnapshot userDoc = await firestore.collection(model_user.KEY_COLLECTION_USERS).doc(userId).get();
@@ -70,6 +86,22 @@ class service_users {
 
     // Add waiting group Id and filter list for distinct items
     waitingGroups.add(groupId);
+    user.waitingGroupsIds = waitingGroups.toSet().toList();
+
+    // Update in database
+    await userDoc.reference.update({model_user.KEY_WAITING_GROUPS: user.waitingGroupsIds});
+
+    return user;
+  }
+
+  Future<model_user> removeWaitingGroupId(String userId, String groupId) async {
+    // Get user groups
+    DocumentSnapshot userDoc = await firestore.collection(model_user.KEY_COLLECTION_USERS).doc(userId).get();
+    model_user user = model_user.fromMap(userDoc.data());
+    List<String> waitingGroups = user.waitingGroupsIds;
+
+    // Add waiting group Id and filter list for distinct items
+    waitingGroups.remove(groupId);
     user.waitingGroupsIds = waitingGroups.toSet().toList();
 
     // Update in database

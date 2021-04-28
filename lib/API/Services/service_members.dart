@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:link_ring/API/Models/model_group.dart';
 import 'package:link_ring/API/Models/model_member.dart';
+import 'package:link_ring/API/Services/service_users.dart';
 
 class service_members {
   static service_members _service_instance;
@@ -107,5 +108,52 @@ class service_members {
     if (memberDoc.exists) return;
     member.joinedOn = DateTime.now();
     await memberDoc.reference.set(member.toJson());
+  }
+
+  Future<void> removeMember(String groupId, String memberId) async {
+    // delete member doc
+    await firestore
+        .collection(model_group.KEY_COLLECTION_GROUPS)
+        .doc(groupId)
+        .collection(model_member.KEY_COLLECTION_MEMBERS)
+        .doc(memberId)
+        .delete();
+
+    // Update group in user property
+    await service_users.instance.removeJoinedGroupId(memberId, groupId);
+    await service_users.instance.removeWaitingGroupId(memberId, groupId);
+  }
+
+  Future<void> admitMember(String groupId, String memberId) async {
+    // Update member doc
+    await firestore
+        .collection(model_group.KEY_COLLECTION_GROUPS)
+        .doc(groupId)
+        .collection(model_member.KEY_COLLECTION_MEMBERS)
+        .doc(memberId)
+        .update({
+      model_member.KEY_IS_JOINED: true,
+      model_member.KEY_JOINED_TIME: DateTime.now().toUtc().toString(),
+    });
+
+    // Update group in user property
+    await service_users.instance.removeWaitingGroupId(memberId, groupId);
+    await service_users.instance.addJoinedGroupId(memberId, groupId);
+  }
+
+  Future<void> unAdmitMember(String groupId, String memberId) async {
+    // Update member doc
+    await firestore
+        .collection(model_group.KEY_COLLECTION_GROUPS)
+        .doc(groupId)
+        .collection(model_member.KEY_COLLECTION_MEMBERS)
+        .doc(memberId)
+        .update({
+      model_member.KEY_IS_JOINED: false,
+    });
+
+    // Update group in user property
+    await service_users.instance.removeJoinedGroupId(memberId, groupId);
+    await service_users.instance.addWaitingGroupId(memberId, groupId);
   }
 }
