@@ -34,6 +34,17 @@ class GroupInfoScreen extends StatelessWidget {
           pinned: true,
           titleSpacing: 0,
           flexibleSpace: FlexibleSpaceBar(
+            title: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.end,
+              mainAxisSize: MainAxisSize.max,
+              children: [
+                Text("Created on", style: Theme.of(context).textTheme.subtitle2.copyWith(fontSize: 10, color: Colors.white)),
+                Text(DateTimeDayFormat.format(group.creation_time), style: TextStyle(fontSize: 12)),
+              ],
+            ),
+            titlePadding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+            centerTitle: false,
             background: Hero(
               tag: 'GroupPicture' + group.id,
               transitionOnUserGestures: true,
@@ -47,19 +58,6 @@ class GroupInfoScreen extends StatelessWidget {
             stretchModes: [StretchMode.zoomBackground],
           ),
         ),
-        SliverToBoxAdapter(
-            child: Container(
-                color: Colors.white,
-                margin: EdgeInsets.only(bottom: 20),
-                padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text("Information", style: Theme.of(context).textTheme.subtitle2),
-                    SizedBox(height: 10),
-                    Text("Started on: " + DateTimeDayFormat.format(group.creation_time)),
-                  ],
-                ))),
         SliverToBoxAdapter(
           child: BlocBuilder<cubit_linkMessagesScreen, state_linkMessagesScreen>(
             builder: (ctx, state) => BuildMembersContainer(context, "Admins", state.adminMembers, () {
@@ -185,21 +183,22 @@ class GroupInfoScreen extends StatelessWidget {
               }),
             ),
           ),
-        SliverPadding(padding: EdgeInsets.only(bottom: 20)),
-        SliverPadding(
-          padding: EdgeInsets.symmetric(horizontal: 20),
-          sliver: SliverToBoxAdapter(
-            child: ColorButton(
-              color: Colors.blueAccent,
-              onPressed: () {
-                Clipboard.setData(new ClipboardData(text: "http://LinkRing.Taosif7.com/joingroup?id=" + group.id));
-                ScaffoldMessenger.of(context)
-                    .showSnackBar(new SnackBar(content: Text("Link Copied"), behavior: SnackBarBehavior.floating));
-              },
-              label: 'Invite People',
+        if (context.read<cubit_linkMessagesScreen>().state.group.autoJoin ||
+            context.read<cubit_linkMessagesScreen>().state.isAdmin)
+          SliverPadding(
+            padding: EdgeInsets.fromLTRB(20, 20, 20, 0),
+            sliver: SliverToBoxAdapter(
+              child: ColorButton(
+                color: Colors.blueAccent,
+                onPressed: () {
+                  Clipboard.setData(new ClipboardData(text: "http://LinkRing.Taosif7.com/joingroup?id=" + group.id));
+                  ScaffoldMessenger.of(context)
+                      .showSnackBar(new SnackBar(content: Text("Link Copied"), behavior: SnackBarBehavior.floating));
+                },
+                label: 'Invite People',
+              ),
             ),
           ),
-        ),
         SliverPadding(
           padding: EdgeInsets.fromLTRB(20, 10, 20, 0),
           sliver: SliverToBoxAdapter(
@@ -231,7 +230,8 @@ class GroupInfoScreen extends StatelessWidget {
                 await context.read<cubit_linkMessagesScreen>().leaveGroup();
                 await context.read<cubit_app>().reloadData();
                 hideIndefiniteProgressScreen(context);
-                ScaffoldMessenger.maybeOf(context).showSnackBar(new SnackBar(content: Text("You left the group")));
+                ScaffoldMessenger.maybeOf(context)
+                    .showSnackBar(new SnackBar(content: Text("You left the group"), behavior: SnackBarBehavior.floating));
                 Navigator.of(context).pop();
                 Navigator.of(context).pop();
               },
