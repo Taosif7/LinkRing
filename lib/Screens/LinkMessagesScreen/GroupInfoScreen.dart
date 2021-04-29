@@ -5,10 +5,12 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:link_ring/API/Models/model_group.dart';
 import 'package:link_ring/API/Models/model_member.dart';
 import 'package:link_ring/API/Services/service_members.dart';
+import 'package:link_ring/Cubits/AppState/cubit_app.dart';
 import 'package:link_ring/Cubits/LinkMessagesScreen/cubit_linkMessagesScreen.dart';
 import 'package:link_ring/Cubits/LinkMessagesScreen/state_linkMessagesScreen.dart';
 import 'package:link_ring/Screens/Commons/Buttons.dart';
 import 'package:link_ring/Screens/Commons/CupertinoBackButton.dart';
+import 'package:link_ring/Screens/Commons/IndefiniteProgressScreen.dart';
 import 'package:link_ring/Screens/Commons/ProfileCircleAvatar.dart';
 import 'package:link_ring/Screens/MemberListScreen.dart';
 import 'package:link_ring/Utils/DateFormatConstants.dart';
@@ -203,7 +205,36 @@ class GroupInfoScreen extends StatelessWidget {
           sliver: SliverToBoxAdapter(
             child: ColorButton(
               color: Colors.redAccent,
-              onPressed: () {},
+              onPressed: () async {
+                if (context.read<cubit_linkMessagesScreen>().state.isAdmin &&
+                    context.read<cubit_linkMessagesScreen>().state.group.admin_users_ids.length == 1) {
+                  ScaffoldMessenger.maybeOf(context)
+                      .showSnackBar(new SnackBar(content: Text("Can't leave group as you're the only admin")));
+                  return;
+                }
+
+                // Ask for confirmation
+                bool confirm = await showDialog<bool>(
+                    context: context,
+                    builder: (dialogCtx) {
+                      return new AlertDialog(
+                        title: Text("Do you really want to leave?"),
+                        actions: [
+                          TextButton(child: Text("Yes"), onPressed: () => Navigator.of(context).pop(true)),
+                          TextButton(child: Text("No"), onPressed: () => Navigator.of(context).pop(false)),
+                        ],
+                      );
+                    });
+                if (!confirm) return;
+
+                showIndefiniteProgressScreen(context);
+                await context.read<cubit_linkMessagesScreen>().leaveGroup();
+                await context.read<cubit_app>().reloadData();
+                hideIndefiniteProgressScreen(context);
+                ScaffoldMessenger.maybeOf(context).showSnackBar(new SnackBar(content: Text("You left the group")));
+                Navigator.of(context).pop();
+                Navigator.of(context).pop();
+              },
               label: 'Leave Group',
             ),
           ),

@@ -5,6 +5,7 @@ import 'package:link_ring/API/Models/model_user.dart';
 import 'package:link_ring/API/Services/service_groups.dart';
 import 'package:link_ring/API/Services/service_links.dart';
 import 'package:link_ring/API/Services/service_members.dart';
+import 'package:link_ring/API/Services/service_users.dart';
 import 'package:link_ring/Cubits/LinkMessagesScreen/state_linkMessagesScreen.dart';
 
 class cubit_linkMessagesScreen extends Cubit<state_linkMessagesScreen> {
@@ -83,5 +84,10 @@ class cubit_linkMessagesScreen extends Cubit<state_linkMessagesScreen> {
     if (state.group.admin_users_ids.contains(member.id)) await removeAdmin(member);
 
     emit(state.copy());
+  }
+
+  Future<void> leaveGroup() async {
+    await service_members.instance.removeMember(state.group.id, currentUser.id);
+    await service_users.instance.removeJoinedGroupId(currentUser.id, state.group.id);
   }
 }
