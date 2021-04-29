@@ -77,7 +77,7 @@ class _MyAppState extends State<MyApp> {
   }
 
   void HandleSharedText(String url) {
-    if (RegexPatterns.links.hasMatch(url)) {
+    if (RegexPatterns.links.hasMatch(url) && !url.toLowerCase().startsWith("http://linkring.taosif7.com/joingroup")) {
       navigatorKey.currentState.push(GroupPickerScreen.getRoute(context, showOnlyOwnedGroups: true)).then((group) {
         if (group != null) {
           navigatorKey.currentState.push(SendLinkScreen.getRoute(context, group, url)).then((value) {
