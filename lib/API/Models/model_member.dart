@@ -11,6 +11,7 @@ class model_member {
   static const KEY_IS_JOINED = "is_joined";
   static const KEY_PUSH_TOKEN = "push_token";
   static const KEY_SILENT = "silent";
+  static const KEY_ACK_TIME = "ack_time"; // only for link acknowledgements
 
   String id;
   String email;
@@ -20,6 +21,7 @@ class model_member {
   bool isJoined;
   bool isSilent;
   String pushToken;
+  DateTime acknowledgedOn; // only for link acknowledgements
 
   model_member({this.id, this.email, this.name, this.joinedOn, this.profilePicUrl, this.isJoined, this.isSilent});
 
@@ -42,6 +44,7 @@ class model_member {
     isJoined = json[KEY_IS_JOINED] ?? true;
     pushToken = json[KEY_PUSH_TOKEN];
     isSilent = json[KEY_SILENT] ?? false;
+    acknowledgedOn = json[KEY_ACK_TIME] != null ? DateTime.parse(json[KEY_ACK_TIME]).toLocal() : null;
   }
 
   Map<String, dynamic> toJson() {

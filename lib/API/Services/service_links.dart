@@ -95,4 +95,33 @@ class service_links {
 
     return response.statusCode == 200;
   }
+
+  Future<List<model_member>> getAcknowledgementMembers(String groupId, String linkId,
+      {int quantity = 20, String afterThisId}) async {
+    Query query = firestore
+        .collection(model_group.KEY_COLLECTION_GROUPS)
+        .doc(groupId)
+        .collection(model_link.KEY_COLLECTION_LINKS)
+        .doc(linkId)
+        .collection(model_link.KEY_COLLECTION_ACKNOWLEDGEMENTS)
+        .limit(quantity)
+        .orderBy(model_member.KEY_ACK_TIME, descending: true);
+
+    if (afterThisId != null) {
+      DocumentSnapshot prevDoc;
+      prevDoc = await firestore
+          .collection(model_group.KEY_COLLECTION_GROUPS)
+          .doc(groupId)
+          .collection(model_member.KEY_COLLECTION_MEMBERS)
+          .doc(afterThisId)
+          .get();
+      query = query.startAfterDocument(prevDoc);
+    }
+    QuerySnapshot snapshot = await query.get();
+
+    List<model_member> members = [];
+    snapshot.docs.forEach((doc) => members.add(new model_member.fromJson(doc.data())));
+
+    return members;
+  }
 }

@@ -3,6 +3,7 @@ import 'package:link_ring/API/Models/model_member.dart';
 class model_link {
   // Keys
   static const KEY_COLLECTION_LINKS = "links";
+  static const KEY_COLLECTION_ACKNOWLEDGEMENTS = "acknowledgements";
   static const KEY_ID = "id";
   static const KEY_NAME = "name";
   static const KEY_LINK = "link";
