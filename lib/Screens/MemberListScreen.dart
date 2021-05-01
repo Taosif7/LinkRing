@@ -33,16 +33,11 @@ class _MemberListScreenState extends State<MemberListScreen> {
   @override
   void initState() {
     activeList = widget.members;
+    if (widget.members.length == 0 && widget.onLoadMore != null) loadMoreMembers();
 
     _scrollController.addListener(() async {
       if (_scrollController.position.atEdge && _scrollController.position.pixels != 0) {
-        setState(() => membersLoading = true);
-        List<model_member> moreMembers = await widget.onLoadMore(widget.members.last);
-        if (moreMembers != null && moreMembers.length > 0) widget.members.addAll(moreMembers);
-        setState(() {
-          membersLoading = false;
-          moreMembersAvailable = moreMembers.length != 0;
-        });
+        await loadMoreMembers();
       }
     });
     super.initState();
@@ -155,5 +150,15 @@ class _MemberListScreenState extends State<MemberListScreen> {
         ],
       ),
     );
+  }
+
+  Future<void> loadMoreMembers() async {
+    setState(() => membersLoading = true);
+    List<model_member> moreMembers = await widget.onLoadMore(widget.members.length > 0 ? widget.members.last : null);
+    if (moreMembers != null && moreMembers.length > 0) widget.members.addAll(moreMembers);
+    setState(() {
+      membersLoading = false;
+      moreMembersAvailable = moreMembers.length != 0;
+    });
   }
 }

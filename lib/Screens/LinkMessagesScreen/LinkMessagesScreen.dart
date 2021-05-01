@@ -7,6 +7,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:link_ring/API/Models/model_group.dart';
 import 'package:link_ring/API/Models/model_link.dart';
 import 'package:link_ring/API/Models/model_user.dart';
+import 'package:link_ring/API/Services/service_links.dart';
 import 'package:link_ring/API/Services/service_users.dart';
 import 'package:link_ring/Cubits/AppState/cubit_app.dart';
 import 'package:link_ring/Cubits/LinkMessagesScreen/cubit_linkMessagesScreen.dart';
@@ -16,6 +17,7 @@ import 'package:link_ring/Screens/Commons/ProfileCircleAvatar.dart';
 import 'package:link_ring/Screens/LinkMessagesScreen/GroupInfoScreen.dart';
 import 'package:link_ring/Screens/LinkMessagesScreen/SendLinkScreen.dart';
 import 'package:link_ring/Screens/LinkMessagesScreen/widgets/LinkMessageItem.dart';
+import 'package:link_ring/Screens/MemberListScreen.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import 'file:///D:/AndroidProjects/link_ring/lib/Screens/Commons/RoundIconLabelButton.dart';
@@ -188,7 +190,11 @@ class _LinkMessagesScreenState extends State<LinkMessagesScreen> with SingleTick
                           }),
                           SizedBox(width: 10),
                           if (context.read<cubit_linkMessagesScreen>().state.isAdmin) ...[
-                            RoundIconLabelButton(Icon(Icons.call_made_outlined), "Rings"),
+                            RoundIconLabelButton(
+                              Icon(Icons.call_made_outlined),
+                              "Rings",
+                              onTap: () => showAcknowledgementScreen(context, selectedLink.id),
+                            ),
                             SizedBox(width: 10),
                           ],
                           RoundIconLabelButton(
@@ -233,5 +239,18 @@ class _LinkMessagesScreenState extends State<LinkMessagesScreen> with SingleTick
         context.read<cubit_linkMessagesScreen>().currentUser.id, context.read<cubit_linkMessagesScreen>().state.group.id, silent);
     context.read<cubit_linkMessagesScreen>().emit(context.read<cubit_linkMessagesScreen>().state.copy(isSilent: silent));
     context.read<cubit_app>().updateUser(user);
+  }
+
+  void showAcknowledgementScreen(BuildContext context, String linkId) {
+    Navigator.of(context).push(new CupertinoPageRoute(
+        fullscreenDialog: true,
+        builder: (ctx) => new MemberListScreen(
+              "Acknowledgement List",
+              [],
+              hideActionsForMembers: [context.read<cubit_linkMessagesScreen>().currentUser.id],
+              onLoadMore: (m) => service_links.instance
+                  .getAcknowledgementMembers(context.read<cubit_linkMessagesScreen>().state.group.id, linkId, afterThisId: m?.id),
+              buttons: [],
+            )));
   }
 }
