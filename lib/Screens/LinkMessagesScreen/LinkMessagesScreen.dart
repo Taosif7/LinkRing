@@ -6,6 +6,8 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:link_ring/API/Models/model_group.dart';
 import 'package:link_ring/API/Models/model_link.dart';
+import 'package:link_ring/API/Models/model_user.dart';
+import 'package:link_ring/API/Services/service_users.dart';
 import 'package:link_ring/Cubits/AppState/cubit_app.dart';
 import 'package:link_ring/Cubits/LinkMessagesScreen/cubit_linkMessagesScreen.dart';
 import 'package:link_ring/Cubits/LinkMessagesScreen/state_linkMessagesScreen.dart';
@@ -77,7 +79,27 @@ class _LinkMessagesScreenState extends State<LinkMessagesScreen> with SingleTick
         leading: CupertinoBackIconButton(),
         actions: [
           PopupMenuButton(
-            itemBuilder: (BuildContext context) {},
+            itemBuilder: (BuildContext context) {
+              return [
+                if (context.read<cubit_linkMessagesScreen>().state.isSilent)
+                  PopupMenuItem(
+                      child: ListTile(
+                          title: Text("Unmute"), leading: Icon(Icons.volume_up), contentPadding: EdgeInsets.zero, dense: true),
+                      value: 1)
+                else
+                  PopupMenuItem(
+                      child: ListTile(
+                          title: Text("Mute"), leading: Icon(Icons.volume_off), contentPadding: EdgeInsets.zero, dense: true),
+                      value: 2)
+              ];
+            },
+            onSelected: (idx) async {
+              if (idx == 1) {
+                setGroupSilence(context, false);
+              } else if (idx == 2) {
+                setGroupSilence(context, true);
+              }
+            },
           )
         ],
       ),
@@ -203,5 +225,13 @@ class _LinkMessagesScreenState extends State<LinkMessagesScreen> with SingleTick
       this.selectedLink = null;
       this.showToolbox = false;
     });
+  }
+
+  Future<void> setGroupSilence(BuildContext context, bool silent) async {
+    ScaffoldMessenger.of(context).showSnackBar(new SnackBar(content: Text("Group is now muted")));
+    model_user user = await service_users.instance.changeGroupSilence(
+        context.read<cubit_linkMessagesScreen>().currentUser.id, context.read<cubit_linkMessagesScreen>().state.group.id, silent);
+    context.read<cubit_linkMessagesScreen>().emit(context.read<cubit_linkMessagesScreen>().state.copy(isSilent: silent));
+    context.read<cubit_app>().updateUser(user);
   }
 }

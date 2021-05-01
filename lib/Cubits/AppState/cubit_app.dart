@@ -42,6 +42,8 @@ class cubit_app extends Cubit<state_app> {
     emit(state.copyWith(joinedGroups: joinedGroups, waitingGroups: waitingGroups, user: user, isLoading: false));
   }
 
+  void updateUser(model_user user) => emit(state.copyWith(user: user));
+
   void signOut() {
     emit(new state_app(isLoading: false));
   }

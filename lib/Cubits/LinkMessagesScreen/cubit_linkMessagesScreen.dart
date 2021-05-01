@@ -18,7 +18,8 @@ class cubit_linkMessagesScreen extends Cubit<state_linkMessagesScreen> {
   }
 
   Future<void> loadInitialData() async {
-    emit(state.copy(isLinksLoading: true, isMembersLoading: true));
+    emit(
+        state.copy(isLinksLoading: true, isMembersLoading: true, isSilent: currentUser.silentGroupsIds.contains(state.group.id)));
     List<model_member> adminMembers = await service_members.instance.getMembersByIds(state.group.id, state.group.admin_users_ids);
     List<model_member> joinedMembers = await service_members.instance.getMembers(state.group.id);
     List<model_link> links = await service_links.instance.getLinksForGroup(state.group.id, senderMembers: senderMembers);

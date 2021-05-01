@@ -9,6 +9,7 @@ class state_linkMessagesScreen {
   List<model_member> waitingMembers;
   List<model_member> adminMembers;
   bool isAdmin;
+  bool isSilent;
   model_group group;
 
   // Flags
@@ -22,6 +23,7 @@ class state_linkMessagesScreen {
       this.adminMembers = const [],
       this.isLinksLoading = false,
       this.isAdmin = false,
+      this.isSilent = false,
       this.isMembersLoading = false});
 
   state_linkMessagesScreen addLinks(List<model_link> moreLinks) {
@@ -52,6 +54,7 @@ class state_linkMessagesScreen {
       List<model_member> adminMembers,
       bool isLinksLoading,
       bool isAdmin,
+      bool isSilent,
       bool isMembersLoading}) {
     return new state_linkMessagesScreen(
       group ?? this.group,
@@ -61,6 +64,7 @@ class state_linkMessagesScreen {
       adminMembers: adminMembers ?? this.adminMembers,
       isAdmin: isAdmin ?? this.isAdmin,
       isLinksLoading: isLinksLoading ?? this.isLinksLoading,
+      isSilent: isSilent ?? this.isSilent,
       isMembersLoading: isMembersLoading ?? this.isMembersLoading,
     );
   }

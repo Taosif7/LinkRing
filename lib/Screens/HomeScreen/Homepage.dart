@@ -87,7 +87,13 @@ class Screen_HomePage extends StatelessWidget {
                       title: Text(group.name, style: Theme.of(context).textTheme.headline6.copyWith(fontWeight: FontWeight.w400)),
                       leading: ProfileCircleAvatar.fromGroup(group),
                       tileColor: idx % 2 == 0 ? Colors.blueGrey.withAlpha(15) : Colors.transparent,
-                      trailing: Icon(CupertinoIcons.forward, color: Theme.of(context).primaryColor),
+                      trailing: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          if (state.currentUser.silentGroupsIds.contains(group.id)) Icon(Icons.volume_off, color: Colors.black26),
+                          Icon(CupertinoIcons.forward, color: Theme.of(context).primaryColor),
+                        ],
+                      ),
                       onTap: () => Navigator.push(context, LinkMessagesScreen.getRoute(context, group)),
                     );
                   } else {
