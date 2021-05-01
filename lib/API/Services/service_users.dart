@@ -1,5 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:link_ring/API/Models/model_member.dart';
 import 'package:link_ring/API/Models/model_user.dart';
+import 'package:link_ring/API/Services/service_members.dart';
 
 class service_users {
   static service_users _service_instance;
@@ -106,6 +108,27 @@ class service_users {
 
     // Update in database
     await userDoc.reference.update({model_user.KEY_WAITING_GROUPS: user.waitingGroupsIds});
+
+    return user;
+  }
+
+  Future<model_user> changeGroupSilence(String userId, String groupId, bool isSilent) async {
+    // Get user groups
+    DocumentSnapshot userDoc = await firestore.collection(model_user.KEY_COLLECTION_USERS).doc(userId).get();
+    model_user user = model_user.fromMap(userDoc.data());
+    List<String> silentGroups = user.silentGroupsIds;
+
+    if (isSilent)
+      silentGroups.add(groupId);
+    else
+      silentGroups.remove(groupId);
+    user.silentGroupsIds = silentGroups.toSet().toList();
+
+    // Update in database
+    await userDoc.reference.update({model_user.KEY_SILENT_GROUPS: user.silentGroupsIds});
+
+    // Update in groups
+    await service_members.instance.updateMemberInfo(groupId, model_member.fromUser(user, true)..isSilent = isSilent);
 
     return user;
   }

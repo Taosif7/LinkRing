@@ -10,6 +10,7 @@ class model_member {
   static const KEY_JOINED_TIME = "joined_on";
   static const KEY_IS_JOINED = "is_joined";
   static const KEY_PUSH_TOKEN = "push_token";
+  static const KEY_SILENT = "silent";
 
   String id;
   String email;
@@ -17,9 +18,10 @@ class model_member {
   String profilePicUrl;
   DateTime joinedOn;
   bool isJoined;
+  bool isSilent;
   String pushToken;
 
-  model_member({this.id, this.email, this.name, this.joinedOn, this.profilePicUrl, this.isJoined});
+  model_member({this.id, this.email, this.name, this.joinedOn, this.profilePicUrl, this.isJoined, this.isSilent});
 
   model_member.fromUser(model_user user, bool isJoined) {
     this.id = user.id;
@@ -28,6 +30,7 @@ class model_member {
     this.profilePicUrl = user.profile_pic_url;
     this.isJoined = isJoined;
     this.pushToken = user.msg_token;
+    this.isSilent = false;
   }
 
   model_member.fromJson(Map<String, dynamic> json) {
@@ -38,6 +41,7 @@ class model_member {
     joinedOn = DateTime.parse(json[KEY_JOINED_TIME]).toLocal();
     isJoined = json[KEY_IS_JOINED] ?? true;
     pushToken = json[KEY_PUSH_TOKEN];
+    isSilent = json[KEY_SILENT] ?? false;
   }
 
   Map<String, dynamic> toJson() {
@@ -49,6 +53,7 @@ class model_member {
     data[KEY_JOINED_TIME] = this.joinedOn?.toUtc()?.toString();
     data[KEY_IS_JOINED] = this.isJoined;
     data[KEY_PUSH_TOKEN] = this.pushToken;
+    data[KEY_SILENT] = this.isSilent;
     return data;
   }
 }
