@@ -25,9 +25,10 @@ class cubit_app extends Cubit<state_app> {
 
     // Load groups
     List<model_group> joinedGroups = await service_groups.instance.getGroupsByIds(user.joinedGroupsIds);
+    List<model_group> waitingGroups = await service_groups.instance.getGroupsByIds(user.waitingGroupsIds);
 
     // Set new state with logged in user details
-    emit(state.copyWith(joinedGroups: joinedGroups, user: user, isLoading: false));
+    emit(state.copyWith(joinedGroups: joinedGroups, waitingGroups: waitingGroups, user: user, isLoading: false));
   }
 
   Future<void> reloadData() async {
@@ -36,8 +37,9 @@ class cubit_app extends Cubit<state_app> {
     // Load user & its groups
     model_user user = await service_users.instance.getUserByEmail(state.currentUser.email);
     List<model_group> joinedGroups = await service_groups.instance.getGroupsByIds(user.joinedGroupsIds);
+    List<model_group> waitingGroups = await service_groups.instance.getGroupsByIds(user.waitingGroupsIds);
 
-    emit(state.copyWith(joinedGroups: joinedGroups, user: user, isLoading: false));
+    emit(state.copyWith(joinedGroups: joinedGroups, waitingGroups: waitingGroups, user: user, isLoading: false));
   }
 
   void signOut() {
