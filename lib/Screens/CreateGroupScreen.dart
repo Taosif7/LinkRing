@@ -34,7 +34,16 @@ class _Screen_CreateGroupState extends State<Screen_CreateGroup> {
             showIndefiniteProgressScreen(context);
 
             // Create group
-            model_group newGroup = new model_group(name: _groupNameController.text, autoJoin: autoJoin, icon_url: "");
+            String initials = ProfileCircleAvatar.getLabelText(_groupNameController.text);
+            LinearGradient gradient = ProfileCircleAvatar.getGradient(initials);
+            model_group newGroup = new model_group(
+              name: _groupNameController.text,
+              autoJoin: autoJoin,
+              icon_url: "",
+              initials: initials,
+              startColor: gradient.colors[0],
+              endColor: gradient.colors[1],
+            );
             newGroup = await service_groups.instance.createGroup(newGroup, context.read<cubit_app>().state.currentUser);
 
             // Add this info to user
