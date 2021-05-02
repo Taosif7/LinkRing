@@ -25,6 +25,11 @@ import android.text.style.ForegroundColorSpan;
 import androidx.annotation.ColorRes;
 import androidx.core.app.NotificationCompat;
 
+import com.android.volley.AuthFailureError;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.FutureTarget;
 import com.taosif7.link_ring.models.model_callNotification;
@@ -34,6 +39,8 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
 public class CallBroadcastReceiver extends BroadcastReceiver {
@@ -165,6 +172,9 @@ public class CallBroadcastReceiver extends BroadcastReceiver {
         callHideIntent.putExtra("data", dataJSON);
         PendingIntent callHidePendingIntent = PendingIntent.getBroadcast(context, 1235, callHideIntent, PendingIntent.FLAG_UPDATE_CURRENT);
         alarmManager.setExact(AlarmManager.RTC, System.currentTimeMillis() + 30000, callHidePendingIntent);
+
+        // Send acknowledgement for call
+        sendAcknowledgement(context, callData);
     }
 
     void HideCallNotification(Context context, Intent intent) {
@@ -233,4 +243,32 @@ public class CallBroadcastReceiver extends BroadcastReceiver {
         return bitmap;
     }
 
+    void sendAcknowledgement(Context context, model_callNotification callData) throws JSONException {
+        // Instantiate the RequestQueue.
+        RequestQueue queue = Volley.newRequestQueue(context);
+        String url = Constants.ENDPOINT_ACKNOWLEDGEMENT;
+
+        JSONObject requestBody = new JSONObject();
+        requestBody.put("linkId", callData.link.id);
+        requestBody.put("groupId", callData.group.id);
+        requestBody.put("memberId", callData.member.id);
+
+        // Request a string response from the provided URL.
+        JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, url, requestBody, response -> {
+
+        }, error -> {
+
+        }) {
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("Content-Type", "application/json; charset=UTF-8");
+                params.put("Authorization", "Basic " + Constants.SERVER_KEY);
+                return params;
+            }
+        };
+
+        // Add the request to the RequestQueue.
+        queue.add(request);
+    }
 }

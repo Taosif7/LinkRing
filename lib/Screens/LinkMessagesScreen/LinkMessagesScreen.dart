@@ -234,7 +234,7 @@ class _LinkMessagesScreenState extends State<LinkMessagesScreen> with SingleTick
   }
 
   Future<void> setGroupSilence(BuildContext context, bool silent) async {
-    ScaffoldMessenger.of(context).showSnackBar(new SnackBar(content: Text("Group is now muted")));
+    ScaffoldMessenger.of(context).showSnackBar(new SnackBar(content: Text("Group is now " + (silent ? "Muted" : "UnMuted"))));
     model_user user = await service_users.instance.changeGroupSilence(
         context.read<cubit_linkMessagesScreen>().currentUser.id, context.read<cubit_linkMessagesScreen>().state.group.id, silent);
     context.read<cubit_linkMessagesScreen>().emit(context.read<cubit_linkMessagesScreen>().state.copy(isSilent: silent));
@@ -245,7 +245,7 @@ class _LinkMessagesScreenState extends State<LinkMessagesScreen> with SingleTick
     Navigator.of(context).push(new CupertinoPageRoute(
         fullscreenDialog: true,
         builder: (ctx) => new MemberListScreen(
-              "Acknowledgement List",
+              "Ringing List",
               [],
               hideActionsForMembers: [context.read<cubit_linkMessagesScreen>().currentUser.id],
               onLoadMore: (m) => service_links.instance
