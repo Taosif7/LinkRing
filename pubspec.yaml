@@ -21,6 +21,7 @@ dependencies:
   # UI
   flutter_signin_button: ^1.1.0
   shimmer: ^2.0.0
+  flutter_native_splash: ^1.1.8+4
 
   #Firebase dependencies
   firebase_core: ^1.0.1
@@ -49,6 +50,13 @@ flutter_icons:
   android: "launcher_icon"
   ios: true
   image_path: "assets/icon/app_icon.png"
+
+flutter_native_splash:
+  # flutter pub run flutter_native_splash:create
+  # flutter pub run flutter_native_splash:remove
+  color: "#FFFFFF"
+  #background_image: "assets/background.png"
+  image: "assets/icon/app_icon.png"
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
