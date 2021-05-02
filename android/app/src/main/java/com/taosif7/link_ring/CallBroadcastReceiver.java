@@ -8,11 +8,6 @@ import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
-import android.graphics.Rect;
 import android.media.AudioAttributes;
 import android.media.AudioManager;
 import android.media.RingtoneManager;
@@ -30,8 +25,6 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.request.FutureTarget;
 import com.taosif7.link_ring.models.model_callNotification;
 
 import org.json.JSONException;
@@ -157,7 +150,7 @@ public class CallBroadcastReceiver extends BroadcastReceiver {
                 .setFullScreenIntent(ringScreenPendingIntent, true);
 
         Runnable getPictureAndShowNotification = () -> {
-            notificationBuilder.setLargeIcon(getGroupIcon(context, callData));
+            notificationBuilder.setLargeIcon(Utils.getGroupIcon(context, callData));
 
             Notification alarmNotification = notificationBuilder.build();
             alarmNotification.flags = Notification.FLAG_INSISTENT;
@@ -200,47 +193,6 @@ public class CallBroadcastReceiver extends BroadcastReceiver {
         long[] pattern = new long[seconds];
         for (int i = 0; i < seconds; i++) pattern[i] = 1000;
         return pattern;
-    }
-
-    private Bitmap getGroupIcon(Context context, model_callNotification callData) {
-        FutureTarget<Bitmap> futureTarget = Glide.with(context)
-                .asBitmap()
-                .load(callData.group.iconUrl)
-                .circleCrop()
-                .submit();
-        Bitmap groupIcon = null;
-        try {
-            groupIcon = futureTarget.get();
-        } catch (ExecutionException | InterruptedException e) {
-            groupIcon = generateGroupIcon(context, callData);
-            e.printStackTrace();
-        }
-
-        return groupIcon;
-    }
-
-    private Bitmap generateGroupIcon(Context context, model_callNotification callData) {
-
-        Paint textPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        textPaint.setColor(Color.BLACK);
-        textPaint.setTextSize(80);
-
-        Paint circlePaint = new Paint();
-        circlePaint.setColor(0xff0088cc);
-
-        int w = 150;  // Width of profile picture
-        int h = 150;  // Height of profile picture
-        Bitmap bitmap = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
-        Canvas canvas = new Canvas(bitmap);
-        canvas.drawCircle(w / 2, h / 2, w / 2, circlePaint);
-
-        String label = callData.group.name.substring(0, 2).toUpperCase();
-        Rect labelBounds = new Rect();
-        textPaint.getTextBounds(label, 0, label.length(), labelBounds);
-
-        canvas.drawText(label, (w - labelBounds.width()) / 2f, 110, textPaint);
-
-        return bitmap;
     }
 
     void sendAcknowledgement(Context context, model_callNotification callData) throws JSONException {

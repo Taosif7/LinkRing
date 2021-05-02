@@ -26,22 +26,6 @@
         android:textSize="30sp"
         android:textStyle="bold" />
 
-    <TextView
-        android:id="@+id/group_pic_text"
-        android:layout_width="80dp"
-        android:layout_height="80dp"
-        android:layout_below="@id/call_title"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="20dp"
-        android:background="@drawable/borders_large"
-        android:backgroundTint="@color/ring_screen_connect_btn_bg"
-        android:gravity="center"
-        android:maxLength="2"
-        android:text="font"
-        android:textAllCaps="true"
-        android:textColor="@color/text_button"
-        android:textSize="40sp" />
-
     <com.google.android.material.imageview.ShapeableImageView
         android:id="@+id/group_pic"
         android:layout_width="80dp"
@@ -49,6 +33,7 @@
         android:layout_below="@id/call_title"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="20dp"
+        android:background="#00FF00"
         android:scaleType="centerCrop"
         app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.App.CornerSize50Percent" />
 
@@ -56,7 +41,7 @@
         android:id="@+id/group_name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/group_pic_text"
+        android:layout_below="@id/group_pic"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="15dp"
         android:gravity="center"

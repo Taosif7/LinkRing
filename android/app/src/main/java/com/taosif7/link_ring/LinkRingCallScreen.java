@@ -101,7 +101,6 @@ public class LinkRingCallScreen extends AppCompatActivity {
             ((TextView) findViewById(R.id.link_text)).setText(callData.link.link);
             ((TextView) findViewById(R.id.sender_name)).setText(callData.sender.name);
             ((TextView) findViewById(R.id.group_name)).setText(callData.group.name);
-            ((TextView) findViewById(R.id.group_pic_text)).setText(callData.group.name);
             ((TextView) findViewById(R.id.link_title)).setText(callData.link.name);
             findViewById(R.id.link_title).setVisibility(!callData.link.hasName ? View.GONE : View.VISIBLE);
 
@@ -109,7 +108,9 @@ public class LinkRingCallScreen extends AppCompatActivity {
                 Glide.with(this)
                         .load(callData.group.iconUrl)
                         .into((ImageView) findViewById(R.id.group_pic));
-            } else findViewById(R.id.group_pic).setVisibility(View.GONE);
+            } else {
+                ((ImageView) findViewById(R.id.group_pic)).setImageBitmap(Utils.generateGroupIcon(this, callData));
+            }
 
             findViewById(R.id.connect_btn).setOnClickListener(new View.OnClickListener() {
                 @Override
